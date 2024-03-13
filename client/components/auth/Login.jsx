@@ -130,10 +130,7 @@ const styles = StyleSheet.create({
     color: "#666",
     paddingVertical: 1,
   },
-  linkContainer: {
-    borderBottomColor: "#666",
-    borderBottomWidth: 1,
-  },
+  linkContainer: {},
   pressed: {
     opacity: 0.5,
   },
