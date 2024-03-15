@@ -9,19 +9,7 @@ import {
 import React, { useCallback, useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 
-let dummyPost = {
-  content:
-    "Hello how are you? Let' talk about something interesting. What about cars? I am Lewis Hamilton, so I love cars. What about you? I am Lewis Hamilton, so I loo What about you? ",
-  image:
-    "https://media.formula1.com/content/dam/fom-website/sutton/2023/Bahrain/Sunday/1471447115.jpg.img.640.medium.jpg/1678031744732.jpg",
-  author: {
-    image:
-      "https://static.wikia.nocookie.net/f1wikia/images/9/9f/LewisHam.png/revision/latest?cb=20220309110334",
-    name: "Lewis Hamilton",
-  },
-};
-
-const Post = ({ post = dummyPost }) => {
+const Post = ({ post }) => {
   const [showAllText, setShowAllText] = useState(false);
   const [lengthMore, setLengthMore] = useState(false);
   const [postIsLiked, setPostIsLiked] = useState(false);
@@ -52,7 +40,7 @@ const Post = ({ post = dummyPost }) => {
           />
           <View>
             <Text style={styles.username}>{post.author.name}</Text>
-            <Text>1 day ago</Text>
+            <Text>{post.publishDate}</Text>
           </View>
         </View>
         <View style={styles.postBody}>
@@ -122,6 +110,7 @@ const styles = StyleSheet.create({
     padding: 10,
     gap: 10,
     backgroundColor: "#fff",
+    marginBottom: 10,
   },
   postInfo: {
     borderBottomColor: "#ccc",
@@ -154,8 +143,8 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "flex-start",
     gap: 50,
-    // width: "60%",
     paddingHorizontal: 10,
+    paddingVertical: 5,
   },
   actionIcon: {
     height: 24,
@@ -163,6 +152,7 @@ const styles = StyleSheet.create({
   },
   imageContainer: {
     height: 200,
+    marginTop: 20,
   },
   image: {
     flex: 1,

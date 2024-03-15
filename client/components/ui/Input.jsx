@@ -8,7 +8,12 @@ import {
 } from "react-native";
 import React from "react";
 
-const Input = ({ inputValue, setInputValue, submitInputHandler }) => {
+const Input = ({
+  inputValue,
+  setInputValue,
+  submitInputHandler,
+  icon = require(`../../assets/send.png`),
+}) => {
   return (
     <View style={styles.inputContainer}>
       <TextInput
@@ -24,10 +29,7 @@ const Input = ({ inputValue, setInputValue, submitInputHandler }) => {
         ]}
         onPress={submitInputHandler}
       >
-        <Image
-          source={require("../../assets/send.png")}
-          style={styles.inputIcon}
-        />
+        {icon !== null && <Image source={icon} style={styles.inputIcon} />}
       </Pressable>
     </View>
   );
