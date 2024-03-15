@@ -10,6 +10,7 @@ import {
 } from "react-native";
 import React, { useState } from "react";
 import v4 from "uuid4";
+import Input from "../ui/Input";
 
 const renderChatItem = (userId, itemData) => {
   return (
@@ -52,26 +53,11 @@ const Chat = ({ userId = 2, route, navigation }) => {
           />
         </View>
       </View>
-      <View style={styles.inputContainer}>
-        <TextInput
-          style={styles.input}
-          placeholder="Type here..."
-          onChangeText={(text) => setInputValue(text)}
-          value={inputValue}
-        />
-        <Pressable
-          style={({ pressed }) => [
-            styles.iconContainer,
-            pressed && styles.pressed,
-          ]}
-          onPress={sendMessageHandler}
-        >
-          <Image
-            source={require("../../assets/send.png")}
-            style={styles.inputIcon}
-          />
-        </Pressable>
-      </View>
+      <Input
+        inputValue={inputValue}
+        setInputValue={setInputValue}
+        submitInputHandler={sendMessageHandler}
+      />
     </SafeAreaView>
   );
 };
@@ -97,7 +83,7 @@ const styles = StyleSheet.create({
     paddingBottom: 20,
   },
   messageContainer: {
-    backgroundColor: "yellow",
+    backgroundColor: "#bbddfd",
     padding: 15,
     margin: 10,
     marginVertical: 5,
@@ -111,32 +97,5 @@ const styles = StyleSheet.create({
   },
   messageToCurrentUser: {
     alignSelf: "flex-end",
-  },
-  inputContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    minHeight: 40,
-    borderColor: "#000",
-    borderWidth: 1,
-    marginHorizontal: 10,
-    borderRadius: 20,
-    marginBottom: 10,
-  },
-  input: {
-    fontSize: 16,
-    flex: 10,
-    height: "100%",
-    padding: 10,
-  },
-
-  iconContainer: {
-    flex: 1,
-  },
-  inputIcon: {
-    height: 24,
-    width: 24,
-  },
-  pressed: {
-    opacity: 0.5,
   },
 });

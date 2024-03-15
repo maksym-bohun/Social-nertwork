@@ -10,6 +10,7 @@ import Chats from "./components/Chats/Chats";
 import NewPost from "./components/NewPost/NewPost";
 import { createDrawerNavigator } from "@react-navigation/drawer";
 import Chat from "./components/Chats/Chat";
+import Comment from "./components/Home/Post/AddComment";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -96,7 +97,7 @@ function Landing() {
 export default function App() {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Login">
+      <Stack.Navigator initialRouteName="Landing">
         <Stack.Screen name="Register" component={Register} />
         <Stack.Screen name="Login" component={Login} />
         <Stack.Screen
@@ -122,6 +123,11 @@ export default function App() {
               ),
             };
           }}
+        />
+        <Stack.Screen
+          name="Add comment"
+          component={Comment}
+          options={{ animation: "slide_from_bottom" }}
         />
       </Stack.Navigator>
     </NavigationContainer>
