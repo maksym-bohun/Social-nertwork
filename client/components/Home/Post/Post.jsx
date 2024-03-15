@@ -18,7 +18,6 @@ const Post = ({ post }) => {
 
   const onTextLayout = useCallback((e) => {
     setLengthMore(e.nativeEvent.lines.length >= 3); //to check the text is more than 4 lines or not
-    console.log(e.nativeEvent.lines.length);
   }, []);
 
   const toggleNumberOfLines = () => {

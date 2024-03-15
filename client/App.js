@@ -109,7 +109,6 @@ export default function App() {
           name="chat"
           component={Chat}
           options={({ route }) => {
-            console.log("ROUTE ", route.params.userImage);
             return {
               title: route.params.username,
               headerBackTitleVisible: false,
