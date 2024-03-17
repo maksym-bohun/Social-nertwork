@@ -46,12 +46,6 @@ const CustomDrawerItem = ({ title, imageSource }) => {
 };
 
 function DrawerPage() {
-  const userData = {
-    name: "Maksym Bohun",
-    image:
-      "https://media.licdn.com/dms/image/D5603AQEzk9WLsIll9Q/profile-displayphoto-shrink_800_800/0/1676998529571?e=2147483647&v=beta&t=u-Wxwf3m9PU_xOkwXrZoDtQNx6WicyGSGPX_6M8pJEw",
-    posts: [],
-  };
   return (
     <Drawer.Navigator initialRouteName="Home draw">
       <Drawer.Screen
@@ -100,8 +94,45 @@ function DrawerPage() {
 
 function EditAccountScreen() {
   return (
-    <Drawer.Navigator>
-      <Drawer.Screen name="Account" component={Account} />
+    <Drawer.Navigator initialRouteName="Account">
+      <Drawer.Screen
+        name="Oleksandr Usyk"
+        component={Login}
+        options={{
+          drawerLabel: () => (
+            <CustomDrawerItem
+              title="Oleksandr Usyk"
+              imageSource="https://ca-times.brightspotcdn.com/dims4/default/944d9ad/2147483647/strip/true/crop/3900x2599+0+0/resize/1200x800!/quality/75/?url=https%3A%2F%2Fcalifornia-times-brightspot.s3.amazonaws.com%2Fcb%2Fcb%2F88421cf7552ea4b7ad10c003f537%2F608af726816e448ea3e0f9a9af2c0feb"
+            />
+          ),
+        }}
+      />
+      <Drawer.Screen
+        component={Home}
+        name="Home draw"
+        options={{
+          title: "Home",
+          drawerIcon: () => (
+            <Image
+              style={{ height: 22, width: 22 }}
+              source={require("./assets/home.png")}
+            />
+          ),
+        }}
+      />
+      <Drawer.Screen
+        name="Account"
+        component={Account}
+        options={{
+          title: "Account",
+          drawerIcon: () => (
+            <Image
+              style={{ height: 22, width: 22 }}
+              source={require("./assets/user.png")}
+            />
+          ),
+        }}
+      />
     </Drawer.Navigator>
   );
 }

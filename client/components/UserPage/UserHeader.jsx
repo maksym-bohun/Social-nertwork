@@ -10,10 +10,7 @@ const UserHeader = ({ user, mode = "user", onEditAccount }) => {
       <Image source={{ uri: user.image }} style={styles.avatar} />
       <View>
         <Text style={styles.username}>{user.name}</Text>
-        <Text>
-          Maybe some really really really really really really really really
-          long text
-        </Text>
+        <Text>{user.shortInfo}</Text>
       </View>
       {mode === "user" && (
         <View style={styles.actions}>

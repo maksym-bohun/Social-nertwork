@@ -9,6 +9,8 @@ const Account = ({ navigation }) => {
     image:
       "https://ca-times.brightspotcdn.com/dims4/default/944d9ad/2147483647/strip/true/crop/3900x2599+0+0/resize/1200x800!/quality/75/?url=https%3A%2F%2Fcalifornia-times-brightspot.s3.amazonaws.com%2Fcb%2Fcb%2F88421cf7552ea4b7ad10c003f537%2F608af726816e448ea3e0f9a9af2c0feb",
     posts: [],
+    shortInfo:
+      " Maybe some really really really really really really really really long text",
   };
   return (
     <ScrollView style={styles.container}>
@@ -17,7 +19,7 @@ const Account = ({ navigation }) => {
         user={user}
         onEditAccount={() => {
           console.log("EDIT");
-          navigation.navigate("Edit account");
+          navigation.navigate("Edit account", { user });
         }}
       />
       <PostsList posts={user.posts} />
