@@ -1,6 +1,7 @@
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import React from "react";
 import { useNavigation } from "@react-navigation/native";
+import Button from "../ui/Button";
 
 const UserHeader = ({ user, mode = "user", onEditAccount }) => {
   const navigation = useNavigation();
@@ -14,22 +15,12 @@ const UserHeader = ({ user, mode = "user", onEditAccount }) => {
       </View>
       {mode === "user" && (
         <View style={styles.actions}>
-          <TouchableOpacity style={[styles.button]}>
-            <Image
-              source={require("../../assets/add-friend.png")}
-              style={styles.actionIcon}
-            />
-            <Text style={styles.actionsText}>Make friends</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={[styles.button, { backgroundColor: "#8DC6FC" }]}
-          >
-            <Image
-              source={require("../../assets/share.png")}
-              style={styles.actionIcon}
-            />
-            <Text style={styles.actionsText}>Send a message</Text>
-          </TouchableOpacity>
+          <Button />
+          <Button
+            style={{ backgroundColor: "#8DC6FC" }}
+            title="Send a message"
+            icon={require("../../assets/share.png")}
+          />
         </View>
       )}
       {mode === "account" && (
@@ -43,6 +34,31 @@ const UserHeader = ({ user, mode = "user", onEditAccount }) => {
           </TouchableOpacity>
         </View>
       )}
+
+      <TouchableOpacity
+        style={styles.friendsContainer}
+        onPress={() =>
+          navigation.navigate("Friends List", { users: user.friends })
+        }
+      >
+        <Text style={{ fontSize: 16, fontWeight: "500", marginRight: 10 }}>
+          {user.friends.length} Friends:
+        </Text>
+        <View style={styles.friendsImagesContainer}>
+          {user.friends.map((user, i) => {
+            console.log("i ", i);
+            if (i < 3)
+              return (
+                <View key={user.id} style={i > 0 && { marginLeft: -18 }}>
+                  <Image
+                    source={{ uri: user.image }}
+                    style={styles.friendsAvatar}
+                  />
+                </View>
+              );
+          })}
+        </View>
+      </TouchableOpacity>
     </View>
   );
 };
@@ -84,5 +100,27 @@ const styles = StyleSheet.create({
   actionsText: {
     fontSize: 16,
     fontWeight: "500",
+  },
+
+  friendsContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginTop: 20,
+    backgroundColor: "#ccc",
+    alignSelf: "stretch",
+    paddingHorizontal: 10,
+    justifyContent: "center",
+    paddingVertical: 5,
+    borderRadius: 15,
+    flex: 1,
+  },
+
+  friendsImagesContainer: { flexDirection: "row", gap: 5 },
+  friendsAvatar: {
+    height: 30,
+    width: 30,
+    borderRadius: 50,
+    borderColor: "#fff",
+    borderWidth: 2,
   },
 });

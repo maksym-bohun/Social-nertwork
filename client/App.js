@@ -14,6 +14,7 @@ import Comment from "./components/Home/Post/AddComment";
 import UserPage from "./components/UserPage/UserPage";
 import Account from "./components/Account/Account";
 import EditAccount from "./components/Account/EditAccount";
+import FriendsList from "./components/UserPage/FriendsList";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -139,7 +140,7 @@ function EditAccountScreen() {
 
 function AccountStack() {
   return (
-    <Stack.Navigator screenOptions={{ headerBackTitleVisible: false }}>
+    <Stack.Navigator screenOptions={{ headerBackTitle: "Back" }}>
       <Stack.Screen
         name="Account Stack"
         component={EditAccountScreen}
@@ -161,9 +162,20 @@ function HomeScreen() {
       <Stack.Screen
         name="User page"
         component={UserPage}
-        // options={{ animation: "slide_from_bottom" }}
+        options={({ route }) => ({
+          headerBackTitle: "Back",
+          title: route.params.user.name,
+        })}
       />
       <Stack.Screen name="Add comment" component={Comment} />
+      <Stack.Screen
+        name="Friends List"
+        component={FriendsList}
+        options={({ route }) => ({
+          headerBackTitle: "Back",
+          title: "Friends",
+        })}
+      />
     </Stack.Navigator>
   );
 }
@@ -235,13 +247,16 @@ function ChatTab() {
     <Stack.Navigator>
       <Stack.Screen
         component={Chats}
-        name="Chats"
+        name="Chats Screen"
         // options={{ headerShown: false }}
       />
       <Stack.Screen
         component={Chat}
         name="chat"
-        options={({ route }) => ({ title: route.params.username })}
+        options={({ route }) => ({
+          title: route.params.username,
+          headerBackTitle: "Back",
+        })}
       />
     </Stack.Navigator>
   );

@@ -35,7 +35,7 @@ const AddComment = () => {
       authorImage:
         "https://icdn.sempreinter.com/wp-content/uploads/2023/11/Girona-Striker-Artem-Dovbyk-2-scaled.jpg",
       comment:
-        "Girona is also great! I used to play in Dnipro-1 but Girona is really another level. It's fantastic. Girona is also great! I used to play in Dnipro-1 but Girona is really another level. It's fantastic.",
+        "Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptates delectus porro nisi impedit ex esse! Ab laboriosam accusantium at blanditiis quaerat, tempore doloribus aspernatur perferendis molestiae corporis, maiores amet necessitatibus!",
     },
   ]);
 

@@ -11,6 +11,7 @@ const Account = ({ navigation }) => {
     posts: [],
     shortInfo:
       " Maybe some really really really really really really really really long text",
+    friends: [],
   };
   return (
     <ScrollView style={styles.container}>
