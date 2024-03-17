@@ -8,127 +8,274 @@ import Home from "./components/Home/Home";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import Chats from "./components/Chats/Chats";
 import NewPost from "./components/NewPost/NewPost";
-import { createDrawerNavigator } from "@react-navigation/drawer";
+import { DrawerItem, createDrawerNavigator } from "@react-navigation/drawer";
 import Chat from "./components/Chats/Chat";
 import Comment from "./components/Home/Post/AddComment";
+import UserPage from "./components/UserPage/UserPage";
+import Account from "./components/Account/Account";
+import EditAccount from "./components/Account/EditAccount";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 const Drawer = createDrawerNavigator();
 
-function DrawerPage() {
+const CustomDrawerItem = ({ title, imageSource }) => {
   return (
-    <Drawer.Navigator
-      screenOptions={{
-        drawerIcon: () => (
+    <DrawerItem
+      label={() => (
+        <View
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+          }}
+        >
           <Image
-            style={{ height: 28, width: 28, marginTop: 10 }}
-            source={require("./assets/home.png")}
+            source={{ uri: imageSource }}
+            style={{
+              width: 40,
+              height: 40,
+              marginRight: 10,
+              borderRadius: 50,
+            }}
           />
-        ),
-      }}
-    >
-      <Drawer.Screen component={Home} name="Home" />
+          <Text style={{ fontSize: 16, fontWeight: "600" }}>{title}</Text>
+        </View>
+      )}
+    />
+  );
+};
+
+function DrawerPage() {
+  const userData = {
+    name: "Maksym Bohun",
+    image:
+      "https://media.licdn.com/dms/image/D5603AQEzk9WLsIll9Q/profile-displayphoto-shrink_800_800/0/1676998529571?e=2147483647&v=beta&t=u-Wxwf3m9PU_xOkwXrZoDtQNx6WicyGSGPX_6M8pJEw",
+    posts: [],
+  };
+  return (
+    <Drawer.Navigator initialRouteName="Home draw">
+      <Drawer.Screen
+        name="Oleksandr Usyk"
+        component={Login}
+        options={{
+          drawerLabel: () => (
+            <CustomDrawerItem
+              title="Oleksandr Usyk"
+              imageSource="https://ca-times.brightspotcdn.com/dims4/default/944d9ad/2147483647/strip/true/crop/3900x2599+0+0/resize/1200x800!/quality/75/?url=https%3A%2F%2Fcalifornia-times-brightspot.s3.amazonaws.com%2Fcb%2Fcb%2F88421cf7552ea4b7ad10c003f537%2F608af726816e448ea3e0f9a9af2c0feb"
+            />
+          ),
+        }}
+      />
+
+      <Drawer.Screen
+        component={Home}
+        name="Home draw"
+        options={{
+          title: "Home",
+          drawerIcon: () => (
+            <Image
+              style={{ height: 22, width: 22 }}
+              source={require("./assets/home.png")}
+            />
+          ),
+        }}
+      />
+      <Drawer.Screen
+        name="Account"
+        component={AccountStack}
+        options={{
+          headerShown: false,
+          title: "Account",
+          drawerIcon: () => (
+            <Image
+              style={{ height: 22, width: 22 }}
+              source={require("./assets/user.png")}
+            />
+          ),
+        }}
+      />
     </Drawer.Navigator>
   );
 }
 
-function Landing() {
+function EditAccountScreen() {
   return (
-    <Tab.Navigator
-      screenOptions={{
-        tabBarStyle: { height: 90 },
-        tabBarShowLabel: false,
-      }}
-    >
-      <Tab.Screen
-        name="Home1"
+    <Drawer.Navigator>
+      <Drawer.Screen name="Account" component={Account} />
+    </Drawer.Navigator>
+  );
+}
+
+function AccountStack() {
+  return (
+    <Stack.Navigator screenOptions={{ headerBackTitleVisible: false }}>
+      <Stack.Screen
+        name="Account Stack"
+        component={EditAccountScreen}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen name="Edit account" component={EditAccount} />
+    </Stack.Navigator>
+  );
+}
+
+function HomeScreen() {
+  return (
+    <Stack.Navigator initialRouteName="Home page">
+      <Stack.Screen
         component={DrawerPage}
-        options={{
-          headerShown: false,
-          tabBarIcon: ({ focused }) => (
-            <Image
-              style={{ height: 28, width: 28, marginTop: 10 }}
-              source={
-                focused
-                  ? require("./assets/home_filled.png")
-                  : require("./assets/home.png")
-              }
-            />
-          ),
-        }}
+        name="Home page"
+        options={{ headerShown: false }}
       />
-      <Tab.Screen
-        name="New post"
-        component={NewPost}
-        options={{
-          tabBarIcon: ({ focused }) => (
-            <Image
-              style={{ height: 36, width: 36 }}
-              source={
-                focused
-                  ? require("./assets/plus_filled.png")
-                  : require("./assets/plus.png")
-              }
-            />
-          ),
-        }}
+      <Stack.Screen
+        name="User page"
+        component={UserPage}
+        // options={{ animation: "slide_from_bottom" }}
       />
-      <Tab.Screen
-        name="Chats"
+      <Stack.Screen name="Add comment" component={Comment} />
+    </Stack.Navigator>
+  );
+}
+
+// function Landing() {
+//   return (
+//     <Tab.Navigator
+//       screenOptions={{
+//         tabBarStyle: { height: 90 },
+//         tabBarShowLabel: false,
+//       }}
+//     >
+//       <Tab.Screen
+//         name="Home"
+//         component={HomeScreen}
+//         options={{
+//           headerShown: false,
+//           tabBarIcon: ({ focused }) => (
+//             <Image
+//               style={{ height: 28, width: 28, marginTop: 10 }}
+//               source={
+//                 focused
+//                   ? require("./assets/home_filled.png")
+//                   : require("./assets/home.png")
+//               }
+//             />
+//           ),
+//         }}
+//       />
+//       <Tab.Screen
+//         name="New post"
+//         component={NewPost}
+//         options={{
+//           tabBarIcon: ({ focused }) => (
+//             <Image
+//               style={{ height: 36, width: 36 }}
+//               source={
+//                 focused
+//                   ? require("./assets/plus_filled.png")
+//                   : require("./assets/plus.png")
+//               }
+//             />
+//           ),
+//         }}
+//       />
+//       {/* CHATS */}
+//       <Tab.Screen
+//         name="Chats"
+//         component={Chats}
+//         options={{
+//           tabBarIcon: ({ focused }) => (
+//             <Image
+//               style={{ height: 28, width: 28, marginTop: 10 }}
+//               source={
+//                 focused
+//                   ? require("./assets/chat_filled.png")
+//                   : require("./assets/chat.png")
+//               }
+//             />
+//           ),
+//         }}
+//       />
+//     </Tab.Navigator>
+//   );
+// }
+
+function ChatTab() {
+  return (
+    <Stack.Navigator>
+      <Stack.Screen
         component={Chats}
-        options={{
-          tabBarIcon: ({ focused }) => (
-            <Image
-              style={{ height: 28, width: 28, marginTop: 10 }}
-              source={
-                focused
-                  ? require("./assets/chat_filled.png")
-                  : require("./assets/chat.png")
-              }
-            />
-          ),
-        }}
+        name="Chats"
+        // options={{ headerShown: false }}
       />
-    </Tab.Navigator>
+      <Stack.Screen
+        component={Chat}
+        name="chat"
+        options={({ route }) => ({ title: route.params.username })}
+      />
+    </Stack.Navigator>
   );
 }
 
 export default function App() {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Landing">
-        <Stack.Screen name="Register" component={Register} />
-        <Stack.Screen name="Login" component={Login} />
-        <Stack.Screen
-          name="Landing"
-          component={Landing}
-          options={{ headerShown: false }}
-        />
-        <Stack.Screen
-          name="chat"
-          component={Chat}
-          options={({ route }) => {
-            return {
-              title: route.params.username,
-              headerBackTitleVisible: false,
-              headerRight: () => (
-                <Image
-                  style={styles.avatar}
-                  source={{
-                    uri: route.params.userImage,
-                  }}
-                />
-              ),
-            };
+      <Tab.Navigator
+        screenOptions={{
+          tabBarStyle: { height: 90 },
+          tabBarShowLabel: false,
+        }}
+      >
+        <Tab.Screen
+          name="Home"
+          component={HomeScreen}
+          options={{
+            headerShown: false,
+            tabBarIcon: ({ focused }) => (
+              <Image
+                style={{ height: 28, width: 28, marginTop: 10 }}
+                source={
+                  focused
+                    ? require("./assets/home_filled.png")
+                    : require("./assets/home.png")
+                }
+              />
+            ),
           }}
         />
-        <Stack.Screen
-          name="Add comment"
-          component={Comment}
-          options={{ animation: "slide_from_bottom" }}
+        <Tab.Screen
+          name="New post"
+          component={NewPost}
+          options={{
+            tabBarIcon: ({ focused }) => (
+              <Image
+                style={{ height: 36, width: 36 }}
+                source={
+                  focused
+                    ? require("./assets/plus_filled.png")
+                    : require("./assets/plus.png")
+                }
+              />
+            ),
+          }}
         />
-      </Stack.Navigator>
+        <Tab.Screen
+          name="Chats"
+          component={ChatTab}
+          options={{
+            headerShown: false,
+            tabBarIcon: ({ focused }) => (
+              <Image
+                style={{ height: 28, width: 28, marginTop: 10 }}
+                source={
+                  focused
+                    ? require("./assets/chat_filled.png")
+                    : require("./assets/chat.png")
+                }
+              />
+            ),
+          }}
+        />
+      </Tab.Navigator>
     </NavigationContainer>
   );
 }

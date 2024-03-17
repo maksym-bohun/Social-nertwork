@@ -30,7 +30,7 @@ const renderChatItem = (userId, itemData) => {
 
 const Chat = ({ userId = 2, route, navigation }) => {
   const [messages, setMessages] = useState([
-    { senderId: 1, message: "Hi", id: "12312321s" },
+    { senderId: 1, message: "Do you want 2 grams?", id: "12312321s" },
   ]);
   const [inputValue, setInputValue] = useState("");
   const sendMessageHandler = () => {

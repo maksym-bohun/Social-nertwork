@@ -30,7 +30,12 @@ const Post = ({ post }) => {
   return (
     <View style={styles.post}>
       <View style={styles.postInfo}>
-        <View style={styles.authorInfo}>
+        <TouchableOpacity
+          style={styles.authorInfo}
+          onPress={() =>
+            navigation.navigate("User page", { user: post.author })
+          }
+        >
           <Image
             style={styles.avatar}
             source={{
@@ -41,7 +46,8 @@ const Post = ({ post }) => {
             <Text style={styles.username}>{post.author.name}</Text>
             <Text>{post.publishDate}</Text>
           </View>
-        </View>
+        </TouchableOpacity>
+
         <View style={styles.postBody}>
           <Text
             onTextLayout={onTextLayout}
