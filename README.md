@@ -1,1 +1,1 @@
-# RN-Instagram-clone
+# Social network app
