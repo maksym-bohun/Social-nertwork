@@ -1,6 +1,7 @@
 const express = require("express");
 const hpp = require("hpp");
 const usersRouter = require("./routes/usersRoutes");
+const postsRouter = require("./routes/postsRoutes");
 // const chatsRouter = require("./routes/chatsRoutes");
 const globalErrorHandler = require("./controllers/errorController");
 const cookieParser = require("cookie-parser");
@@ -76,6 +77,7 @@ app.use((req, res, next) => {
 });
 
 app.use("/api/v1/users", jsonParser, usersRouter);
+app.use("/api/v1/posts", jsonParser, postsRouter);
 // app.use("/api/v1/chats", jsonParser, chatsRouter);
 
 app.all("*", (req, res, next) => {

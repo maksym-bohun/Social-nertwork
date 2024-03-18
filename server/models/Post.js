@@ -12,7 +12,7 @@ const postSchema = mongoose.Schema({
   },
   image: {
     type: String,
-    default: require("../images/users/"),
+    default: "user.webp",
   },
   createdAt: {
     type: Date,
