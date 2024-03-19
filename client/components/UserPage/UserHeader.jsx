@@ -6,9 +6,11 @@ import Button from "../ui/Button";
 const UserHeader = ({ user, mode = "user", onEditAccount }) => {
   const navigation = useNavigation();
 
+  console.log("USER IMAGE ", user.image);
+
   return (
     <View style={styles.userInfo}>
-      <Image source={{ uri: user.image }} style={styles.avatar} />
+      <Image source={{ uri: user.avatar }} style={styles.avatar} />
       <View>
         <Text style={styles.username}>{user.name}</Text>
         <Text>{user.shortInfo}</Text>

@@ -4,12 +4,15 @@ const currentUserReducer = createSlice({
   name: "allUsers",
   initialState: {
     user: {},
+    loggedIn: false,
   },
   reducers: {
     setUser: (state, action) => {
+      state.loggedIn = true;
       state.user = action.payload;
       console.log(
-        "SET USER🦾🙎‍♂️🙎‍♂️🙎‍♂️🙎‍♂️🙎‍♂️🙎‍♂️🙎‍♂️🙎‍♂️🙎‍♂️🙎‍♂️🙎‍♂️🙎‍♂️🙎‍♂️🙎‍♂️🙎‍♂️🙎‍♂️🙎‍♂️🙎‍♂️🙎‍♂️🙎‍♂️🙎‍♂️🙎‍♂️🙎‍♂️🙎‍♂️🙎‍♂️🙎‍♂️🙎‍♂️🙎‍♂️🙎‍♂️🙎‍♂️🙎‍♂️🙎‍♂️🙎‍♂️"
+        "SET USER🦾🙎‍♂️🙎‍♂️🙎‍♂️🙎‍♂️🙎‍♂️🙎‍♂️🙎‍♂️🙎‍♂️🙎‍♂️🙎‍♂️🙎‍♂️🙎‍♂️🙎‍♂️🙎‍♂️🙎‍♂️🙎‍♂️🙎‍♂️🙎‍♂️🙎‍♂️🙎‍♂️🙎‍♂️🙎‍♂️🙎‍♂️🙎‍♂️🙎‍♂️🙎‍♂️🙎‍♂️🙎‍♂️🙎‍♂️🙎‍♂️🙎‍♂️🙎‍♂️🙎‍♂️",
+        state.user
       );
     },
     likePost: (state, action) => {
@@ -23,8 +26,14 @@ const currentUserReducer = createSlice({
         state.user.likedPosts.splice(indexInArray, 1);
       }
     },
+
+    logout: (state, action) => {
+      state.loggedIn = false;
+      state.user = null;
+    },
   },
 });
 
-export const { setUser, likePost, dislikePost } = currentUserReducer.actions;
+export const { setUser, likePost, dislikePost, login, logout } =
+  currentUserReducer.actions;
 export default currentUserReducer.reducer;

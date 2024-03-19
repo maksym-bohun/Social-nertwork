@@ -1,27 +1,56 @@
-import { Provider, useSelector } from "react-redux";
+import { Provider } from "react-redux";
 import store from "./store/store";
-import MainNavigation from "./MainNavigation";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useEffect, useState } from "react";
+import { Router } from "./routing/Router";
+
+const getMe = async () => {
+  const token = await AsyncStorage.getItem("token");
+  const res = await fetch("http://127.0.0.1:8000/api/v1/users/me", {
+    headers: {
+      "Content-type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  const data = await res.json();
+  return { token, currentUser: data };
+};
+
+const getAllUsers = async () => {
+  const res = await fetch("http://127.0.0.1:8000/api/v1/users", {
+    headers: {
+      "Content-type": "application/json",
+    },
+  });
+  const data = await res.json();
+  if (data.status === "success") return data.users;
+  return null;
+};
 
 export default function App() {
   const [token, setToken] = useState(null);
-  // const currentUser = useSelector((state) => {
-  //   state;
-  // });
+  const [currentUser, setCurrentUser] = useState("");
+  const [allUsers, setAllUsers] = useState([]);
 
-  // console.log("curUser ", currentUser);
   useEffect(() => {
-    console.log("tokennnn ", token);
-  }, [token]);
+    const fetchData = async () => {
+      const { token, currentUser } = await getMe();
+      const users = await getAllUsers();
+      setToken(token);
+      setCurrentUser(currentUser.data);
+      setAllUsers(users);
+    };
 
-  (async () => {
-    setToken(await AsyncStorage.getItem("token"));
-  })();
+    fetchData();
+  }, []);
 
   return (
     <Provider store={store}>
-      <MainNavigation userIsLoggedIn={token === null ? false : true} />
+      <Router
+        userIsStoredOnDevice={token !== ""}
+        currentUser={currentUser}
+        allUsers={allUsers}
+      />
     </Provider>
   );
 }

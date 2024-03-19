@@ -133,9 +133,12 @@ const getToken = async () => {
   return await AsyncStorage.getItem("token");
 };
 
-const Home = () => {
+const Home = ({ route, navigation }) => {
   const [inputValue, setInputValue] = useState("");
-  const submitInputHandler = () => {};
+  const submitInputHandler = () => {
+    console.log("route ", route);
+    navigation.navigate("Users list", { users: [] });
+  };
 
   return (
     <View>
@@ -147,13 +150,19 @@ const Home = () => {
             color={"#555"}
             style={styles.icon}
           />
-          <TextInput style={styles.input} placeholder="Find somebody..." />
+          <TextInput
+            style={styles.input}
+            placeholder="Find somebody..."
+            value={inputValue}
+            onChangeText={(text) => setInputValue(text)}
+          />
         </View>
         <Pressable
           style={({ pressed }) => [
             styles.searchButton,
             pressed && styles.pressed,
           ]}
+          onPress={submitInputHandler}
         >
           <Text style={styles.searchButtonText}>Search</Text>
         </Pressable>

@@ -5,6 +5,7 @@ const usersReducer = createSlice({
   initialState: { users: [] },
   reducers: {
     setUsers: (state, payload) => {
+      console.log("SET ALL USERS 🦊🦊🦊🦊🦊🦊🦊");
       state.users = payload;
     },
   },

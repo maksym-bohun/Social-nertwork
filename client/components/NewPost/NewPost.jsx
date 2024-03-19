@@ -1,4 +1,6 @@
 import {
+  Alert,
+  Button,
   Image,
   Pressable,
   ScrollView,
@@ -12,22 +14,78 @@ import React, { useState } from "react";
 import * as ImagePicker from "expo-image-picker";
 import { AntDesign } from "@expo/vector-icons";
 import { FontAwesome5 } from "@expo/vector-icons";
+import postImage from "../../utils/postImage";
+import * as Location from "expo-location";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const NewPost = () => {
+const NewPost = ({ navigation }) => {
   const [image, setImage] = useState(null);
+  const [text, setText] = useState("");
 
   const imagePicker = async () => {
-    let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.All,
-      allowsEditing: true,
-      //   aspect: [4, 3],
-      quality: 1,
-    });
+    let { status } = await Location.requestForegroundPermissionsAsync();
+    if (status === "granted") {
+      let data = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: true,
+        aspect: [1, 1],
+        quality: 0.5,
+      });
+      if (!data.cancelled) {
+        const uri = data.assets[0].uri;
+        let newfile = {
+          uri,
+          type: `test/${uri.split(".")[1]}`,
+          name: `test.${uri.split(".")[1]}`,
+        };
+        postImage(newfile, setImage);
+      }
+    } else {
+      Alert.alert("you need to give up permission to work");
+    }
+  };
 
-    if (!result.canceled) {
-      const uri = result.assets[0].uri;
-      setImage(uri);
-      const fileName = uri.substring(uri.lastIndexOf("/") + 1);
+  const createPostHandler = async () => {
+    if (text.trim() !== "") {
+      const token = await AsyncStorage.getItem("token");
+      console.log("token ", token);
+      const body =
+        image !== null
+          ? JSON.stringify({
+              text,
+              image,
+            })
+          : JSON.stringify({
+              text,
+            });
+
+      try {
+        const res = await fetch("http://127.0.0.1:8000/api/v1/posts", {
+          method: "POST",
+          body,
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        const data = await res.json();
+        if (data.status === "success") {
+          Alert.alert(
+            "Post has been created succesfully!",
+            "It will appear on your page very soon.",
+            [
+              {
+                text: "Go home",
+                onPress: () => navigation.navigate("Home draw"),
+              },
+            ]
+          );
+          setText("");
+          setImage(null);
+        }
+      } catch (err) {
+        console.log("Error: ", err);
+      }
     }
   };
 
@@ -41,6 +99,8 @@ const NewPost = () => {
             multiline={true}
             numberOfLines={4}
             placeholder="Write your story"
+            value={text}
+            onChangeText={(value) => setText(value)}
           />
         </View>
         {!image && (
@@ -82,7 +142,7 @@ const NewPost = () => {
             </View>
           </View>
         )}
-        <TouchableOpacity style={styles.button}>
+        <TouchableOpacity style={styles.button} onPress={createPostHandler}>
           <Text style={styles.buttonText}>Create post</Text>
         </TouchableOpacity>
       </View>

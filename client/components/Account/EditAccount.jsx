@@ -8,10 +8,10 @@ import {
 } from "react-native";
 import React, { useState } from "react";
 import ChangeAvatar from "../ui/ChangeAvatar";
+import postImage from "../../utils/postImage";
 
 const EditAccount = ({ route }) => {
   const { user } = route.params;
-  console.log("route.params", route.params);
   const [image, setImage] = useState(null);
   const [name, setName] = useState(user.name);
   const [shortInfo, setShortInfo] = useState(user.shortInfo);
@@ -23,9 +23,15 @@ const EditAccount = ({ route }) => {
     setShortInfo(text);
   };
 
+  console.log("IMAGE 🦺", image);
+
   return (
     <View style={styles.container}>
-      <ChangeAvatar setImage={setImage} source={{ uri: image || user.image }} />
+      <ChangeAvatar
+        setImage={setImage}
+        source={{ uri: image || user.avatar }}
+        handleUploadAvatar={(file) => postImage(file, setImage)}
+      />
 
       <View style={styles.changeContainer}>
         <Text style={styles.label}>Name:</Text>

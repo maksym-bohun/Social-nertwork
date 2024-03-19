@@ -1,20 +1,30 @@
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { StatusBar } from "expo-status-bar";
-import { Image, StyleSheet, Text, View } from "react-native";
-import Register from "./components/auth/Register";
-import Login from "./components/auth/Login";
-import Home from "./components/Home/Home";
+import {
+  Image,
+  Pressable,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import Login from "../components/auth/Login";
+import Home from "../components/Home/Home";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import Chats from "./components/Chats/Chats";
-import NewPost from "./components/NewPost/NewPost";
+import Chats from "../components/Chats/Chats";
+import NewPost from "../components/NewPost/NewPost";
 import { DrawerItem, createDrawerNavigator } from "@react-navigation/drawer";
-import Chat from "./components/Chats/Chat";
-import Comment from "./components/Home/Post/AddComment";
-import UserPage from "./components/UserPage/UserPage";
-import Account from "./components/Account/Account";
-import EditAccount from "./components/Account/EditAccount";
-import FriendsList from "./components/UserPage/FriendsList";
+import Chat from "../components/Chats/Chat";
+import Comment from "../components/Home/Post/AddComment";
+import UserPage from "../components/UserPage/UserPage";
+import Account from "../components/Account/Account";
+import EditAccount from "../components/Account/EditAccount";
+import FriendsList from "../components/UserPage/FriendsList";
+import { useDispatch, useSelector } from "react-redux";
+import { useEffect } from "react";
+import { logout, setUser } from "../store/currentUserReducer";
+import { MaterialIcons } from "@expo/vector-icons";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -47,18 +57,23 @@ const CustomDrawerItem = ({ title, imageSource }) => {
 };
 
 function DrawerPage() {
+  const currentUser = useSelector((state) => state.currentUserReducer.user);
+
   return (
     <Drawer.Navigator initialRouteName="Home draw">
       <Drawer.Screen
-        name="Oleksandr Usyk"
+        name="User's name"
         component={Login}
-        options={{
-          drawerLabel: () => (
-            <CustomDrawerItem
-              title="Oleksandr Usyk"
-              imageSource="https://ca-times.brightspotcdn.com/dims4/default/944d9ad/2147483647/strip/true/crop/3900x2599+0+0/resize/1200x800!/quality/75/?url=https%3A%2F%2Fcalifornia-times-brightspot.s3.amazonaws.com%2Fcb%2Fcb%2F88421cf7552ea4b7ad10c003f537%2F608af726816e448ea3e0f9a9af2c0feb"
-            />
-          ),
+        options={({ route, navigation }) => {
+          console.log("ROute", route);
+          return {
+            drawerLabel: () => (
+              <CustomDrawerItem
+                title={currentUser?.name || ""}
+                imageSource={currentUser?.avatar || ""}
+              />
+            ),
+          };
         }}
       />
 
@@ -70,7 +85,7 @@ function DrawerPage() {
           drawerIcon: () => (
             <Image
               style={{ height: 22, width: 22 }}
-              source={require("./assets/home.png")}
+              source={require("../assets/home.png")}
             />
           ),
         }}
@@ -84,7 +99,7 @@ function DrawerPage() {
           drawerIcon: () => (
             <Image
               style={{ height: 22, width: 22 }}
-              source={require("./assets/user.png")}
+              source={require("../assets/user.png")}
             />
           ),
         }}
@@ -94,6 +109,9 @@ function DrawerPage() {
 }
 
 function EditAccountScreen() {
+  const dispatch = useDispatch();
+  const currentUser = useSelector((state) => state.currentUserReducer.user);
+
   return (
     <Drawer.Navigator initialRouteName="Account">
       <Drawer.Screen
@@ -102,8 +120,8 @@ function EditAccountScreen() {
         options={{
           drawerLabel: () => (
             <CustomDrawerItem
-              title="Oleksandr Usyk"
-              imageSource="https://ca-times.brightspotcdn.com/dims4/default/944d9ad/2147483647/strip/true/crop/3900x2599+0+0/resize/1200x800!/quality/75/?url=https%3A%2F%2Fcalifornia-times-brightspot.s3.amazonaws.com%2Fcb%2Fcb%2F88421cf7552ea4b7ad10c003f537%2F608af726816e448ea3e0f9a9af2c0feb"
+              title={currentUser?.name || ""}
+              imageSource={currentUser?.avatar || ""}
             />
           ),
         }}
@@ -116,7 +134,7 @@ function EditAccountScreen() {
           drawerIcon: () => (
             <Image
               style={{ height: 22, width: 22 }}
-              source={require("./assets/home.png")}
+              source={require("../assets/home.png")}
             />
           ),
         }}
@@ -126,10 +144,22 @@ function EditAccountScreen() {
         component={Account}
         options={{
           title: "Account",
+          headerRight: () => (
+            <TouchableOpacity
+              style={styles.logoutButton}
+              onPress={async () => {
+                await AsyncStorage.setItem("token", "");
+                dispatch(logout());
+              }}
+            >
+              <MaterialIcons name="logout" size={20} color="black" />
+              <Text>Log out</Text>
+            </TouchableOpacity>
+          ),
           drawerIcon: () => (
             <Image
               style={{ height: 22, width: 22 }}
-              source={require("./assets/user.png")}
+              source={require("../assets/user.png")}
             />
           ),
         }}
@@ -151,7 +181,7 @@ function AccountStack() {
   );
 }
 
-function HomeScreen() {
+function HomeScreen({ currentUser }) {
   return (
     <Stack.Navigator initialRouteName="Home page">
       <Stack.Screen
@@ -167,6 +197,7 @@ function HomeScreen() {
           title: route.params.user.name,
         })}
       />
+      <Stack.Screen name="Users list" component={FriendsList} />
       <Stack.Screen name="Add comment" component={Comment} />
       <Stack.Screen
         name="Friends List"
@@ -200,7 +231,7 @@ function ChatTab() {
   );
 }
 
-function TabNavigation() {
+function TabNavigation({ currentUser }) {
   return (
     <Tab.Navigator
       screenOptions={{
@@ -218,8 +249,8 @@ function TabNavigation() {
               style={{ height: 28, width: 28, marginTop: 10 }}
               source={
                 focused
-                  ? require("./assets/home_filled.png")
-                  : require("./assets/home.png")
+                  ? require("../assets/home_filled.png")
+                  : require("../assets/home.png")
               }
             />
           ),
@@ -234,8 +265,8 @@ function TabNavigation() {
               style={{ height: 36, width: 36 }}
               source={
                 focused
-                  ? require("./assets/plus_filled.png")
-                  : require("./assets/plus.png")
+                  ? require("../assets/plus_filled.png")
+                  : require("../assets/plus.png")
               }
             />
           ),
@@ -251,8 +282,8 @@ function TabNavigation() {
               style={{ height: 28, width: 28, marginTop: 10 }}
               source={
                 focused
-                  ? require("./assets/chat_filled.png")
-                  : require("./assets/chat.png")
+                  ? require("../assets/chat_filled.png")
+                  : require("../assets/chat.png")
               }
             />
           ),
@@ -262,23 +293,15 @@ function TabNavigation() {
   );
 }
 
-const MainNavigation = ({ userIsLoggedIn }) => {
+const MainNavigation = () => {
   return (
-    <NavigationContainer>
-      <Stack.Navigator initialRouteName={userIsLoggedIn ? "Landing" : "Login"}>
-        <Stack.Screen component={Login} name="Login" />
-        <Stack.Screen
-          component={Register}
-          name="Register"
-          options={{ title: "Sign up", headerBackVisible: false }}
-        />
-        <Stack.Screen
-          component={TabNavigation}
-          name="Landing"
-          options={{ headerShown: false }}
-        />
-      </Stack.Navigator>
-    </NavigationContainer>
+    <Stack.Navigator>
+      <Stack.Screen
+        component={TabNavigation}
+        name="Landing"
+        options={{ headerShown: false }}
+      />
+    </Stack.Navigator>
   );
 };
 
@@ -299,6 +322,15 @@ const styles = StyleSheet.create({
     height: 40,
     width: 40,
     borderRadius: 50,
+    marginRight: 10,
+  },
+  logoutButton: {
+    flexDirection: "row",
+    backgroundColor: "#afd7fd",
+    padding: 5,
+    borderRadius: 10,
+    alignItems: "center",
+    gap: 5,
     marginRight: 10,
   },
 });

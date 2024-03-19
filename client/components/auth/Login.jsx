@@ -16,7 +16,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useDispatch } from "react-redux";
 import { setUser } from "../../store/currentUserReducer";
 
-const Register = ({ navigation }) => {
+const Login = ({ navigation }) => {
   const [avatar, setAvatar] = useState(require("../../assets/avatar.png"));
   const [avatarFull, setAvatarFull] = useState(
     require("../../assets/avatar.png")
@@ -63,8 +63,7 @@ const Register = ({ navigation }) => {
         const data = await res.json();
         if (data.status === "success") {
           await AsyncStorage.setItem("token", data.data.token);
-          dispatch(setUser(data.data));
-          navigation.navigate("Landing");
+          dispatch(setUser(data.data.user));
         } else {
           console.log("Error");
         }
@@ -85,6 +84,7 @@ const Register = ({ navigation }) => {
             onChangeText={formik.handleChange("email")}
             value={formik.values.email}
             onBlur={formik.handleBlur("email")}
+            autoCapitalize="none"
           />
         </View>
         <Text
@@ -136,7 +136,7 @@ const Register = ({ navigation }) => {
   );
 };
 
-export default Register;
+export default Login;
 
 const styles = StyleSheet.create({
   container: {

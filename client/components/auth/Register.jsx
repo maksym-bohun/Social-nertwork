@@ -14,12 +14,12 @@ import ChangeAvatar from "../ui/ChangeAvatar";
 import PasswordInput from "../ui/PasswordInput";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useDispatch } from "react-redux";
-import { setUser } from "../../store/currentUserReducer";
+import { login, setUser } from "../../store/currentUserReducer";
+import postImage from "../../utils/postImage";
 
 const Register = ({ navigation }) => {
-  const [avatar, setAvatar] = useState(require("../../assets/avatar.png"));
-  const [avatarFull, setAvatarFull] = useState(
-    require("../../assets/avatar.png")
+  const [avatar, setAvatar] = useState(
+    "https://toppng.com/uploads/preview/roger-berry-avatar-placeholder-11562991561rbrfzlng6h.png"
   );
   const [passwordIsVisible, setPasswordIsVisible] = useState(false);
   const [confirmPasswordIsVisible, setConfirmPasswordIsVisible] =
@@ -51,11 +51,13 @@ const Register = ({ navigation }) => {
     }),
     onSubmit: async () => {
       const formData = new FormData();
+      // postImage();
+      console.log("POSTED");
       formData.append("name", formik.values.username);
       formData.append("email", formik.values.email);
       formData.append("password", formik.values.password);
       formData.append("passwordConfirm", formik.values.confirmPassword);
-      formData.append("avatar", avatarFull);
+      formData.append("avatar", avatar);
 
       try {
         const res = await fetch("http://127.0.0.1:8000/api/v1/users/signup", {
@@ -65,8 +67,7 @@ const Register = ({ navigation }) => {
         const data = await res.json();
         await AsyncStorage.setItem("token", data.data.token);
         console.log("TOKEN ", data.data.token);
-        dispatch(setUser(data.data));
-        navigation.navigate("Landing");
+        dispatch(setUser(data.data.user));
       } catch (err) {
         console.log("Error: ", err.message);
       }
@@ -77,9 +78,8 @@ const Register = ({ navigation }) => {
     <KeyboardAvoidingView style={styles.container} behavior="padding">
       <View style={styles.avatarContainer}>
         <ChangeAvatar
-          setImage={setAvatar}
-          setAvatarFull={setAvatarFull}
-          source={avatar}
+          handleUploadAvatar={(file) => postImage(file, setAvatar)}
+          source={{ uri: avatar }}
           imageStyle={{ height: 170, width: 170 }}
         />
       </View>
@@ -114,6 +114,7 @@ const Register = ({ navigation }) => {
             onChangeText={formik.handleChange("email")}
             value={formik.values.email}
             onBlur={formik.handleBlur("email")}
+            autoCapitalize="none"
           />
         </View>
         <Text
