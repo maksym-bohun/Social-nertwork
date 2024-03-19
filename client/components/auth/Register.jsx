@@ -2,19 +2,30 @@ import {
   View,
   Text,
   TextInput,
-  Button,
   StyleSheet,
   Pressable,
+  TouchableOpacity,
+  KeyboardAvoidingView,
 } from "react-native";
 import React, { useState } from "react";
-import { Feather } from "@expo/vector-icons";
 import { useFormik } from "formik";
 import * as Yup from "yup";
+import ChangeAvatar from "../ui/ChangeAvatar";
+import PasswordInput from "../ui/PasswordInput";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useDispatch } from "react-redux";
+import { setUser } from "../../store/currentUserReducer";
 
 const Register = ({ navigation }) => {
+  const [avatar, setAvatar] = useState(require("../../assets/avatar.png"));
+  const [avatarFull, setAvatarFull] = useState(
+    require("../../assets/avatar.png")
+  );
   const [passwordIsVisible, setPasswordIsVisible] = useState(false);
   const [confirmPasswordIsVisible, setConfirmPasswordIsVisible] =
     useState(false);
+
+  const dispatch = useDispatch();
 
   const formik = useFormik({
     initialValues: {
@@ -38,13 +49,41 @@ const Register = ({ navigation }) => {
         .required("Required")
         .oneOf([Yup.ref("password")], "Passwords must match"),
     }),
-    onSubmit: () => {
-      navigation.navigate("Landing");
+    onSubmit: async () => {
+      const formData = new FormData();
+      formData.append("name", formik.values.username);
+      formData.append("email", formik.values.email);
+      formData.append("password", formik.values.password);
+      formData.append("passwordConfirm", formik.values.confirmPassword);
+      formData.append("avatar", avatarFull);
+
+      try {
+        const res = await fetch("http://127.0.0.1:8000/api/v1/users/signup", {
+          method: "POST",
+          body: formData,
+        });
+        const data = await res.json();
+        await AsyncStorage.setItem("token", data.data.token);
+        console.log("TOKEN ", data.data.token);
+        dispatch(setUser(data.data));
+        navigation.navigate("Landing");
+      } catch (err) {
+        console.log("Error: ", err.message);
+      }
     },
   });
 
   return (
-    <View style={styles.container}>
+    <KeyboardAvoidingView style={styles.container} behavior="padding">
+      <View style={styles.avatarContainer}>
+        <ChangeAvatar
+          setImage={setAvatar}
+          setAvatarFull={setAvatarFull}
+          source={avatar}
+          imageStyle={{ height: 170, width: 170 }}
+        />
+      </View>
+
       <View style={styles.form}>
         {/* Username  */}
         <View style={styles.inputContainer}>
@@ -88,31 +127,14 @@ const Register = ({ navigation }) => {
         </Text>
 
         {/* Password */}
-        <View style={styles.inputContainer}>
-          <TextInput
-            style={styles.input}
-            placeholder="Password"
-            secureTextEntry={passwordIsVisible ? false : true}
-            onChangeText={formik.handleChange("password")}
-            value={formik.values.password}
-          />
-          {!passwordIsVisible && (
-            <Pressable
-              onPress={() => setPasswordIsVisible(true)}
-              style={styles.icon}
-            >
-              <Feather name="eye" size={22} color="black" />
-            </Pressable>
-          )}
-          {passwordIsVisible && (
-            <Pressable
-              onPress={() => setPasswordIsVisible(false)}
-              style={styles.icon}
-            >
-              <Feather name="eye-off" size={22} color="black" />
-            </Pressable>
-          )}
-        </View>
+        <PasswordInput
+          passwordIsVisible={passwordIsVisible}
+          setPasswordIsVisible={setPasswordIsVisible}
+          placeholder="Password"
+          onChange={formik.handleChange("password")}
+          value={formik.values.password}
+        />
+
         <Text
           style={
             formik.errors.password && formik.touched.password
@@ -124,31 +146,14 @@ const Register = ({ navigation }) => {
         </Text>
 
         {/* ConfirmPassword */}
-        <View style={styles.inputContainer}>
-          <TextInput
-            style={styles.input}
-            placeholder="Confirm password"
-            secureTextEntry={confirmPasswordIsVisible ? false : true}
-            onChangeText={formik.handleChange("confirmPassword")}
-            value={formik.values.confirmPassword}
-          />
-          {!confirmPasswordIsVisible && (
-            <Pressable
-              onPress={() => setConfirmPasswordIsVisible(true)}
-              style={styles.icon}
-            >
-              <Feather name="eye" size={22} color="black" />
-            </Pressable>
-          )}
-          {confirmPasswordIsVisible && (
-            <Pressable
-              onPress={() => setConfirmPasswordIsVisible(false)}
-              style={styles.icon}
-            >
-              <Feather name="eye-off" size={22} color="black" />
-            </Pressable>
-          )}
-        </View>
+
+        <PasswordInput
+          passwordIsVisible={confirmPasswordIsVisible}
+          setPasswordIsVisible={setConfirmPasswordIsVisible}
+          placeholder="Confirm password"
+          onChange={formik.handleChange("confirmPassword")}
+          value={formik.values.confirmPassword}
+        />
         <Text
           style={
             formik.errors.confirmPassword && formik.touched.confirmPassword
@@ -170,9 +175,14 @@ const Register = ({ navigation }) => {
             Already have an account? Log in!
           </Text>
         </Pressable>
-        <Button title="Sign up" onPress={formik.handleSubmit} />
+        <TouchableOpacity
+          onPress={formik.handleSubmit}
+          style={styles.signupButton}
+        >
+          <Text style={styles.signupButtonText}>Sign up</Text>
+        </TouchableOpacity>
       </View>
-    </View>
+    </KeyboardAvoidingView>
   );
 };
 
@@ -184,8 +194,28 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     padding: 10,
   },
-  form: {
+  avatarContainer: {
+    alignItems: "center",
     marginTop: -50,
+    marginBottom: 30,
+  },
+  changeImageIconContainer: {
+    backgroundColor: "#8DC6FC",
+    padding: 5,
+    borderRadius: 40,
+    position: "absolute",
+    bottom: 0,
+    right: 20,
+    borderColor: "#fff",
+    borderWidth: 3,
+  },
+
+  avatar: {
+    height: 200,
+    width: 200,
+  },
+  form: {
+    paddingTop: -50,
     alignItems: "center",
   },
   input: {
@@ -205,9 +235,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginTop: 10,
   },
-  icon: {
-    paddingHorizontal: 8,
-  },
+
   signUpLink: {
     color: "#666",
     paddingVertical: 1,
@@ -226,5 +254,17 @@ const styles = StyleSheet.create({
   errorInvisible: {
     color: "transparent",
     height: 22,
+  },
+  signupButton: {
+    backgroundColor: "#8DC6FC",
+    padding: 10,
+    borderRadius: 10,
+    marginTop: 50,
+  },
+  signupButtonText: {
+    fontSize: 16,
+    textTransform: "uppercase",
+    fontWeight: "500",
+    letterSpacing: 0.6,
   },
 });

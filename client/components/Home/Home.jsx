@@ -6,9 +6,10 @@ import {
   TextInput,
   View,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Post from "./Post/Post";
 import { FontAwesome } from "@expo/vector-icons";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const dummyPosts = [
   {
@@ -127,6 +128,10 @@ const dummyPosts = [
     publishDate: "2 hours ago",
   },
 ];
+
+const getToken = async () => {
+  return await AsyncStorage.getItem("token");
+};
 
 const Home = () => {
   const [inputValue, setInputValue] = useState("");
