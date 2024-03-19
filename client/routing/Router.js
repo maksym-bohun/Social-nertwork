@@ -14,9 +14,7 @@ export const Router = ({ userIsStoredOnDevice, currentUser, allUsers }) => {
   );
 
   useEffect(() => {
-    console.log("CURRENT USER ", currentUser);
     if (currentUser) {
-      console.log("EXISTS");
       dispatch(setUser(currentUser));
     }
     if (allUsers && allUsers.length > 0) {
@@ -24,9 +22,7 @@ export const Router = ({ userIsStoredOnDevice, currentUser, allUsers }) => {
     }
   }, [currentUser, allUsers]);
 
-  useEffect(() => {
-    console.log("USER IS LOGGED IN", userIsLoggedIn);
-  }, [userIsLoggedIn]);
+  useEffect(() => {}, [userIsLoggedIn]);
 
   return (
     <NavigationContainer>

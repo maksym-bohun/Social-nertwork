@@ -10,6 +10,8 @@ import React, { useEffect, useState } from "react";
 import Post from "./Post/Post";
 import { FontAwesome } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useDispatch, useSelector } from "react-redux";
+import { getUsers } from "../../store/usersReducer";
 
 const dummyPosts = [
   {
@@ -135,9 +137,21 @@ const getToken = async () => {
 
 const Home = ({ route, navigation }) => {
   const [inputValue, setInputValue] = useState("");
+  const allUsers = useSelector((state) => state.usersReducer.users);
+
   const submitInputHandler = () => {
     console.log("route ", route);
-    navigation.navigate("Users list", { users: [] });
+    if (inputValue.trim() !== "") {
+      const filteredUsers = allUsers.filter((user) =>
+        user.name.toLowerCase().includes(inputValue.toLowerCase())
+      );
+      console.log("FILTERED USERS", filteredUsers);
+      navigation.navigate("Users list", {
+        users: filteredUsers,
+        input: inputValue,
+      });
+      setInputValue("");
+    }
   };
 
   return (
