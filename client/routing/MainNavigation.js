@@ -197,7 +197,11 @@ function HomeScreen({ currentUser }) {
           title: route.params.user.name,
         })}
       />
-      <Stack.Screen name="Users list" component={FriendsList} />
+      <Stack.Screen
+        name="Users list"
+        component={FriendsList}
+        options={{ title: "Users", headerBackTitle: "Back" }}
+      />
       <Stack.Screen name="Add comment" component={Comment} />
       <Stack.Screen
         name="Friends List"

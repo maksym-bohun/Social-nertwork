@@ -138,12 +138,15 @@ const getToken = async () => {
 const Home = ({ route, navigation }) => {
   const [inputValue, setInputValue] = useState("");
   const allUsers = useSelector((state) => state.usersReducer.users);
+  const currentUser = useSelector((state) => state.currentUserReducer.user);
 
   const submitInputHandler = () => {
     console.log("route ", route);
     if (inputValue.trim() !== "") {
-      const filteredUsers = allUsers.filter((user) =>
-        user.name.toLowerCase().includes(inputValue.toLowerCase())
+      const filteredUsers = allUsers.filter(
+        (user) =>
+          user.name.toLowerCase().includes(inputValue.toLowerCase()) &&
+          user._id !== currentUser._id
       );
       console.log("FILTERED USERS", filteredUsers);
       navigation.navigate("Users list", {

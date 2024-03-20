@@ -5,9 +5,10 @@ const Button = ({
   style,
   title = "Make friends",
   icon = require("../../assets/add-friend.png"),
+  onPress,
 }) => {
   return (
-    <TouchableOpacity style={[styles.button, style]}>
+    <TouchableOpacity style={[styles.button, style]} onPress={onPress}>
       <Image source={icon} style={styles.actionIcon} />
       <Text style={styles.actionsText}>{title}</Text>
     </TouchableOpacity>
