@@ -4,7 +4,6 @@ import Post from "../Home/Post/Post";
 import { Feather } from "@expo/vector-icons";
 
 const PostsList = ({ posts }) => {
-  console.log("POSTS 🌞", posts);
   return (
     <View style={styles.listContainer}>
       {posts.map((post) => (

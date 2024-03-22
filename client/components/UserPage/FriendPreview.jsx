@@ -4,13 +4,14 @@ import Button from "../ui/Button";
 import { useSelector } from "react-redux";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { fetchCurrentUser } from "../../store/currentUserReducer";
+import { push } from "../../routing/rootNavigation";
 
 const FriendPreview = ({ item, navigation }) => {
   const [userIsFriend, setUserIsFriend] = useState(false);
   const currentUser = useSelector((state) => state.currentUserReducer.user);
 
   useEffect(() => {
-    if (currentUser.friends.find((el) => el === item._id)) {
+    if (currentUser.friends.find((el) => el._id === item._id)) {
       setUserIsFriend(true);
     }
   }, [currentUser]);
@@ -56,7 +57,7 @@ const FriendPreview = ({ item, navigation }) => {
       style={styles.userContainer}
       key={item._id}
       onPress={() => {
-        navigation.navigate("User page", { user: item });
+        push("User page", { user: item });
       }}
     >
       <View style={styles.userContainerLeft}>

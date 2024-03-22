@@ -6,9 +6,10 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import UserHeader from "./UserHeader";
 import PostsList from "./PostsList";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const dummyUser = {
   name: "Lewis Hamilton",
@@ -70,16 +71,32 @@ const dummyUser = {
 };
 
 const UserPage = ({ route }) => {
-  let user;
-  user = dummyUser;
-  if (route.params.user) {
-    user = route.params.user;
-  }
+  const [currentUser, setCurrentUser] = useState(null);
+  console.log("route.params", route.params.user._id);
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      const token = await AsyncStorage.getItem("token");
+      const res = await fetch(
+        `http://127.0.0.1:8000/api/v1/users/${route.params.user._id}`
+      );
+      const data = await res.json();
+      console.log("FETCH", data);
+      setCurrentUser(data.data);
+
+      return { token, currentUser: data };
+    };
+    fetchUser();
+  }, []);
 
   return (
     <ScrollView style={styles.container}>
-      <UserHeader user={user} />
-      <PostsList posts={user.posts} />
+      {currentUser !== null && (
+        <View>
+          <UserHeader user={currentUser} />
+          <PostsList posts={currentUser.posts} />
+        </View>
+      )}
     </ScrollView>
   );
 };

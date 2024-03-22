@@ -23,14 +23,12 @@ const EditAccount = ({ route }) => {
     setShortInfo(text);
   };
 
-  console.log("IMAGE 🦺", image);
-
   return (
     <View style={styles.container}>
       <ChangeAvatar
         setImage={setImage}
         source={{ uri: image || user.avatar }}
-        handleUploadAvatar={(file) => postImage(file, setImage)}
+        handleUploadAvatar={(file) => postImage(file, set)}
       />
 
       <View style={styles.changeContainer}>

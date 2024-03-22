@@ -1,4 +1,3 @@
-import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import {
   Image,
@@ -65,7 +64,6 @@ function DrawerPage() {
         name="User's name"
         component={Login}
         options={({ route, navigation }) => {
-          console.log("ROute", route);
           return {
             drawerLabel: () => (
               <CustomDrawerItem
@@ -111,7 +109,6 @@ function DrawerPage() {
 function EditAccountScreen() {
   const dispatch = useDispatch();
   const currentUser = useSelector((state) => state.currentUserReducer.user);
-
   return (
     <Drawer.Navigator initialRouteName="Account">
       <Drawer.Screen
@@ -200,15 +197,20 @@ function HomeScreen({ currentUser }) {
       <Stack.Screen
         name="Users list"
         component={FriendsList}
-        options={{ title: "Users", headerBackTitle: "Back" }}
+        options={({ route }) => ({
+          title: "Users",
+          headerBackTitle: "Back",
+          key: route.params.key,
+        })}
       />
       <Stack.Screen name="Add comment" component={Comment} />
       <Stack.Screen
         name="Friends List"
         component={FriendsList}
         options={({ route }) => ({
-          headerBackTitle: "Back",
           title: "Friends",
+          headerBackTitle: "Back",
+          key: route.params.key, // Установите ключ здесь
         })}
       />
     </Stack.Navigator>
@@ -234,7 +236,6 @@ function ChatTab() {
     </Stack.Navigator>
   );
 }
-
 function TabNavigation({ currentUser }) {
   return (
     <Tab.Navigator

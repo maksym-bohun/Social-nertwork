@@ -48,7 +48,6 @@ const NewPost = ({ navigation }) => {
   const createPostHandler = async () => {
     if (text.trim() !== "") {
       const token = await AsyncStorage.getItem("token");
-      console.log("token ", token);
       const body =
         image !== null
           ? JSON.stringify({

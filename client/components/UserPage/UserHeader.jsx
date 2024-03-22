@@ -2,11 +2,10 @@ import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import React from "react";
 import { useNavigation } from "@react-navigation/native";
 import Button from "../ui/Button";
+import { push } from "../../routing/rootNavigation";
 
 const UserHeader = ({ user, mode = "user", onEditAccount }) => {
   const navigation = useNavigation();
-
-  console.log("USER IMAGE ", user.image);
 
   return (
     <View style={styles.userInfo}>
@@ -40,7 +39,9 @@ const UserHeader = ({ user, mode = "user", onEditAccount }) => {
       <TouchableOpacity
         style={styles.friendsContainer}
         onPress={() =>
-          navigation.navigate("Friends List", { users: user.friends })
+          push("Friends List", {
+            users: user.friends,
+          })
         }
       >
         <Text style={{ fontSize: 16, fontWeight: "500", marginRight: 10 }}>
@@ -48,12 +49,11 @@ const UserHeader = ({ user, mode = "user", onEditAccount }) => {
         </Text>
         <View style={styles.friendsImagesContainer}>
           {user.friends.map((user, i) => {
-            console.log("i ", i);
             if (i < 3)
               return (
-                <View key={user.id} style={i > 0 && { marginLeft: -18 }}>
+                <View key={user._id} style={i > 0 && { marginLeft: -18 }}>
                   <Image
-                    source={{ uri: user.image }}
+                    source={{ uri: user.avatar }}
                     style={styles.friendsAvatar}
                   />
                 </View>

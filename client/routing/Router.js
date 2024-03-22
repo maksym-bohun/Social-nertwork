@@ -3,10 +3,11 @@ import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import MainNavigation from "./MainNavigation";
 import AuthStack from "./AuthStack";
-import { setUser } from "../store/currentUserReducer";
+import { fetchCurrentUser, setUser } from "../store/currentUserReducer";
 import { setUsers } from "../store/usersReducer";
+import { navigationRef } from "./rootNavigation";
 
-export const Router = ({ userIsStoredOnDevice, currentUser, allUsers }) => {
+export const Router = () => {
   const dispatch = useDispatch();
 
   const userIsLoggedIn = useSelector(
@@ -14,18 +15,11 @@ export const Router = ({ userIsStoredOnDevice, currentUser, allUsers }) => {
   );
 
   useEffect(() => {
-    if (currentUser) {
-      dispatch(setUser(currentUser));
-    }
-    if (allUsers && allUsers.length > 0) {
-      dispatch(setUsers(allUsers));
-    }
-  }, [currentUser, allUsers]);
-
-  useEffect(() => {}, [userIsLoggedIn]);
+    dispatch(fetchCurrentUser());
+  }, []);
 
   return (
-    <NavigationContainer>
+    <NavigationContainer ref={navigationRef}>
       {userIsLoggedIn ? <MainNavigation /> : <AuthStack />}
     </NavigationContainer>
   );

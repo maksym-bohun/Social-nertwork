@@ -52,7 +52,6 @@ const Register = ({ navigation }) => {
     onSubmit: async () => {
       const formData = new FormData();
       // postImage();
-      console.log("POSTED");
       formData.append("name", formik.values.username);
       formData.append("email", formik.values.email);
       formData.append("password", formik.values.password);
@@ -66,7 +65,6 @@ const Register = ({ navigation }) => {
         });
         const data = await res.json();
         await AsyncStorage.setItem("token", data.data.token);
-        console.log("TOKEN ", data.data.token);
         dispatch(setUser(data.data.user));
       } catch (err) {
         console.log("Error: ", err.message);
