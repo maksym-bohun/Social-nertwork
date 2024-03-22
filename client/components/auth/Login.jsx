@@ -10,20 +10,14 @@ import {
 import React, { useState } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import ChangeAvatar from "../ui/ChangeAvatar";
 import PasswordInput from "../ui/PasswordInput";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useDispatch } from "react-redux";
-import { setUser } from "../../store/currentUserReducer";
+import { fetchCurrentUser, setUser } from "../../store/currentUserReducer";
+import { fetchUsers } from "../../store/usersReducer";
 
 const Login = ({ navigation }) => {
-  const [avatar, setAvatar] = useState(require("../../assets/avatar.png"));
-  const [avatarFull, setAvatarFull] = useState(
-    require("../../assets/avatar.png")
-  );
   const [passwordIsVisible, setPasswordIsVisible] = useState(false);
-  const [confirmPasswordIsVisible, setConfirmPasswordIsVisible] =
-    useState(false);
 
   const dispatch = useDispatch();
 
@@ -32,7 +26,6 @@ const Login = ({ navigation }) => {
       username: "",
       email: "",
       password: "",
-      confirmPassword: "",
     },
     validationSchema: Yup.object({
       email: Yup.string().email("Invalid email address").required("Required"),
@@ -63,7 +56,9 @@ const Login = ({ navigation }) => {
         const data = await res.json();
         if (data.status === "success") {
           await AsyncStorage.setItem("token", data.data.token);
-          dispatch(setUser(data.data.user));
+          dispatch(fetchCurrentUser());
+          dispatch(fetchUsers());
+          console.log("All dispatched after login");
         } else {
           console.log("Error");
         }

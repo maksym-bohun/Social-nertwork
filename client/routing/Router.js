@@ -4,8 +4,9 @@ import { useDispatch, useSelector } from "react-redux";
 import MainNavigation from "./MainNavigation";
 import AuthStack from "./AuthStack";
 import { fetchCurrentUser, setUser } from "../store/currentUserReducer";
-import { setUsers } from "../store/usersReducer";
+import { fetchUsers, setUsers } from "../store/usersReducer";
 import { navigationRef } from "./rootNavigation";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export const Router = () => {
   const dispatch = useDispatch();
@@ -15,7 +16,10 @@ export const Router = () => {
   );
 
   useEffect(() => {
-    dispatch(fetchCurrentUser());
+    dispatch(fetchUsers());
+    if (AsyncStorage.getItem("token") && AsyncStorage.getItem("token") !== "") {
+      dispatch(fetchCurrentUser());
+    }
   }, []);
 
   return (

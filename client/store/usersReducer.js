@@ -1,22 +1,18 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
-// Async thunk action to fetch users
-export const fetchUsers = createAsyncThunk(
-  "users/fetchUsers",
-  async (nameFragment, thunkAPI) => {
-    try {
-      const response = await fetch("http://127.0.0.1:8000/api/v1/users");
-      const users = await response.json();
-      return users;
-    } catch (error) {
-      return thunkAPI.rejectWithValue({ error: error.message });
-    }
-  }
-);
+export const fetchUsers = createAsyncThunk("users/fetchUsers", async () => {
+  const res = await fetch("http://127.0.0.1:8000/api/v1/users", {
+    headers: {
+      "Content-type": "application/json",
+    },
+  });
+  const data = await res.json();
+  return data.users;
+});
 
 const usersSlice = createSlice({
   name: "users",
-  initialState: { users: [], status: "idle", error: null },
+  initialState: { users: [], status: "idle", error: null, isLoading: false },
   reducers: {
     setUsers: (state, action) => {
       state.users = action.payload;
@@ -25,15 +21,14 @@ const usersSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(fetchUsers.pending, (state) => {
-        state.status = "loading";
+        state.isLoading = true;
       })
       .addCase(fetchUsers.fulfilled, (state, action) => {
-        state.status = "succeeded";
+        state.isLoading = false;
         state.users = action.payload;
       })
-      .addCase(fetchUsers.rejected, (state, action) => {
-        state.status = "failed";
-        state.error = action.payload.error;
+      .addCase(fetchUsers.rejected, (state) => {
+        state.isLoading = false;
       });
   },
 });

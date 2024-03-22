@@ -17,10 +17,14 @@ import { FontAwesome5 } from "@expo/vector-icons";
 import postImage from "../../utils/postImage";
 import * as Location from "expo-location";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useDispatch } from "react-redux";
+import { fetchUsers } from "../../store/usersReducer";
+import { fetchCurrentUser } from "../../store/currentUserReducer";
 
 const NewPost = ({ navigation }) => {
   const [image, setImage] = useState(null);
   const [text, setText] = useState("");
+  const dispatch = useDispatch();
 
   const imagePicker = async () => {
     let { status } = await Location.requestForegroundPermissionsAsync();
@@ -81,6 +85,8 @@ const NewPost = ({ navigation }) => {
           );
           setText("");
           setImage(null);
+          dispatch(fetchUsers());
+          dispatch(fetchCurrentUser());
         }
       } catch (err) {
         console.log("Error: ", err);

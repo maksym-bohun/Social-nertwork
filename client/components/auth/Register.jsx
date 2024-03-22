@@ -22,8 +22,8 @@ const Register = ({ navigation }) => {
     "https://toppng.com/uploads/preview/roger-berry-avatar-placeholder-11562991561rbrfzlng6h.png"
   );
   const [passwordIsVisible, setPasswordIsVisible] = useState(false);
-  const [confirmPasswordIsVisible, setConfirmPasswordIsVisible] =
-    useState(false);
+  // const [confirmPasswordIsVisible, setConfirmPasswordIsVisible] =
+  //   useState(false);
 
   const dispatch = useDispatch();
 
@@ -32,7 +32,7 @@ const Register = ({ navigation }) => {
       username: "",
       email: "",
       password: "",
-      confirmPassword: "",
+      // confirmPassword: "",
     },
     validationSchema: Yup.object({
       username: Yup.string()
@@ -43,11 +43,14 @@ const Register = ({ navigation }) => {
         .min(6, "Password must be more than 6 characters.")
         .max(20, "Password must be less than 20 characters")
         .required("Required"),
-      confirmPassword: Yup.string()
-        .min(6, "Password must be more than 6 characters.")
-        .max(20, "Password must be less than 20 characters")
+      shortInfo: Yup.string()
         .required("Required")
-        .oneOf([Yup.ref("password")], "Passwords must match"),
+        .min(10, "Please enter at least 10 characters."),
+      // confirmPassword: Yup.string()
+      //   .min(6, "Password must be more than 6 characters.")
+      //   .max(20, "Password must be less than 20 characters")
+      //   .required("Required")
+      //   .oneOf([Yup.ref("password")], "Passwords must match"),
     }),
     onSubmit: async () => {
       const formData = new FormData();
@@ -55,7 +58,8 @@ const Register = ({ navigation }) => {
       formData.append("name", formik.values.username);
       formData.append("email", formik.values.email);
       formData.append("password", formik.values.password);
-      formData.append("passwordConfirm", formik.values.confirmPassword);
+      formData.append("shortInfo", formik.values.shortInfo);
+      // formData.append("passwordConfirm", formik.values.confirmPassword);
       formData.append("avatar", avatar);
 
       try {
@@ -91,6 +95,7 @@ const Register = ({ navigation }) => {
             onChangeText={formik.handleChange("username")}
             value={formik.values.username}
             onBlur={formik.handleBlur("username")}
+            maxLength={30}
           />
         </View>
         <Text
@@ -125,6 +130,28 @@ const Register = ({ navigation }) => {
           {formik.errors.email}
         </Text>
 
+        {/* Short info */}
+        <View style={styles.inputContainer}>
+          <TextInput
+            style={styles.input}
+            placeholder="Short information"
+            onChangeText={formik.handleChange("shortInfo")}
+            value={formik.values.shortInfo}
+            onBlur={formik.handleBlur("shortInfo")}
+            autoCapitalize="none"
+            maxLength={45}
+          />
+        </View>
+        <Text
+          style={
+            formik.errors.email && formik.touched.email
+              ? styles.errorVisible
+              : styles.errorInvisible
+          }
+        >
+          {formik.errors.email}
+        </Text>
+
         {/* Password */}
         <PasswordInput
           passwordIsVisible={passwordIsVisible}
@@ -145,8 +172,7 @@ const Register = ({ navigation }) => {
         </Text>
 
         {/* ConfirmPassword */}
-
-        <PasswordInput
+        {/* <PasswordInput
           passwordIsVisible={confirmPasswordIsVisible}
           setPasswordIsVisible={setConfirmPasswordIsVisible}
           placeholder="Confirm password"
@@ -161,7 +187,7 @@ const Register = ({ navigation }) => {
           }
         >
           {formik.errors.confirmPassword}
-        </Text>
+        </Text> */}
 
         <Pressable
           style={({ pressed }) => [

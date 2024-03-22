@@ -7,7 +7,7 @@ const PostsList = ({ posts }) => {
   return (
     <View style={styles.listContainer}>
       {posts.map((post) => (
-        <Post post={post} key={post.id} />
+        <Post post={post} key={post._id} />
       ))}
       {posts.length === 0 && (
         <View style={styles.emptyContainer}>

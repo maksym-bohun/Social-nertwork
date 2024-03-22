@@ -6,10 +6,16 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useNavigation } from "@react-navigation/native";
+import { formatDate } from "../../../utils/formatDate";
+import { useSelector } from "react-redux";
 
 const Post = ({ post }) => {
+  useEffect(() => {
+    console.log("POST ", post);
+  }, []);
+  const currentUser = useSelector((state) => state.currentUserReducer.user);
   const [showAllText, setShowAllText] = useState(false);
   const [lengthMore, setLengthMore] = useState(false);
   const [postIsLiked, setPostIsLiked] = useState(false);
@@ -28,23 +34,26 @@ const Post = ({ post }) => {
   const sendPostHandler = () => {};
 
   return (
-    <View style={styles.post}>
+    <View style={styles.post} key={post._id}>
       <View style={styles.postInfo}>
         <TouchableOpacity
           style={styles.authorInfo}
           onPress={() =>
-            navigation.navigate("User page", { user: post.author })
+            navigation.navigate(
+              currentUser._id === post.author._id ? "Account" : "User page",
+              { user: post.author }
+            )
           }
         >
           <Image
             style={styles.avatar}
             source={{
-              uri: post.author.image,
+              uri: post.author?.avatar,
             }}
           />
           <View>
-            <Text style={styles.username}>{post.author.name}</Text>
-            <Text>{post.publishDate}</Text>
+            <Text style={styles.username}>{post.author?.name}</Text>
+            <Text>{formatDate(post.createdAt)}</Text>
           </View>
         </TouchableOpacity>
 
@@ -54,7 +63,7 @@ const Post = ({ post }) => {
             numberOfLines={showAllText ? undefined : 3}
             style={{ lineHeight: 21, fontSize: 16 }}
           >
-            {post.content}
+            {post.text}
           </Text>
           {lengthMore ? (
             <Text

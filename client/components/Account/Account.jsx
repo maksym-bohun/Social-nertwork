@@ -7,7 +7,6 @@ import { fetchCurrentUser } from "../../store/currentUserReducer";
 
 const Account = ({ navigation }) => {
   const currentUser = useSelector((state) => state.currentUserReducer.user);
-  console.log("CURRENT USER IN ACCOUNT ", currentUser);
   return (
     <ScrollView style={styles.container}>
       <UserHeader

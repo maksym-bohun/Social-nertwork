@@ -13,7 +13,7 @@ export const fetchCurrentUser = createAsyncThunk(
       },
     });
     const data = await res.json();
-    return data;
+    return data.data;
   }
 );
 
@@ -40,6 +40,9 @@ const currentUserSlice = createSlice({
         state.user.likedPosts.splice(indexInArray, 1);
       }
     },
+    login: (state) => {
+      state.loggedIn = true;
+    },
     logout: (state, action) => {
       state.loggedIn = false;
       state.user = null;
@@ -52,8 +55,8 @@ const currentUserSlice = createSlice({
       })
       .addCase(fetchCurrentUser.fulfilled, (state, action) => {
         state.isLoading = false;
-        state.user = action.payload.data;
-        if (action.payload?.data) {
+        state.user = action.payload;
+        if (action.payload) {
           state.loggedIn = true;
         }
       })
