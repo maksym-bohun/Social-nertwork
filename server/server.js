@@ -24,7 +24,7 @@ mongoose
     useFindAndModify: false,
   })
   .then((con) => console.log("DB connection successful!"))
-  .catch((err) => console.log("ERROR"));
+  .catch((err) => console.log("ERROR", err));
 
 const port = process.env.PORT || 8000;
 const server = app.listen(port, () => {
@@ -41,7 +41,7 @@ process.on("unhandledRejection", (err) => {
 
 const io = socket(server, {
   cors: {
-    origin: "http://localhost:3000",
+    origin: "http://127.0.0.1:3000",
     credentials: true,
   },
 });
@@ -57,7 +57,7 @@ io.on("connection", (socket) => {
   });
 
   socket.on("send-message", (data) => {
-    console.log("✅", data);
+    console.log("send-message✅", data);
     const sendUserSocket = onlineUsers.get(data.to);
     console.log(onlineUsers);
     if (sendUserSocket) {

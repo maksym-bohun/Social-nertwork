@@ -1,6 +1,8 @@
+import { path } from "./apiRoutes";
+
 const getMe = async () => {
   const token = await AsyncStorage.getItem("token");
-  const res = await fetch("http://127.0.0.1:8000/api/v1/users/me", {
+  const res = await fetch(`${path}users/me`, {
     headers: {
       "Content-type": "application/json",
       Authorization: `Bearer ${token}`,

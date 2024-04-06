@@ -8,12 +8,28 @@ const userSchema = new mongoose.Schema({
     required: [true, "Please enter the email."],
     // unique: true,
   },
+  avatar: {
+    type: String,
+    default:
+      "https://toppng.com/uploads/preview/roger-berry-avatar-placeholder-11562991561rbrfzlng6h.png",
+  },
   password: { type: String, required: [true, "Please enter password."] },
-  passwordConfirm: { type: String, required: [true, "Please enter password."] },
-
+  // passwordConfirm: { type: String, required: [true, "Please enter password."] },
+  friends: {
+    type: [mongoose.Schema.ObjectId],
+    ref: "User",
+    default: [],
+  },
+  shortInfo: String,
+  // likedPosts: { type: mongoose.Schema.ObjectId, ref: "Post", default: [] },
   posts: {
     type: [mongoose.Schema.ObjectId],
     ref: "Post",
+    default: [],
+  },
+  chats: {
+    type: [mongoose.Schema.ObjectId],
+    ref: "Chat",
     default: [],
   },
   passwordChangedAt: { type: Date, default: Date.now() },
@@ -26,7 +42,7 @@ userSchema.pre("save", async function (next) {
     return next();
   }
   this.password = await bcrypt.hash(this.password, 12);
-  this.passwordConfirm = undefined;
+  // this.passwordConfirm = undefined;
   next();
 });
 

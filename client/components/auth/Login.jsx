@@ -15,6 +15,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useDispatch } from "react-redux";
 import { fetchCurrentUser, setUser } from "../../store/currentUserReducer";
 import { fetchUsers } from "../../store/usersReducer";
+import { path } from "../../utils/apiRoutes";
 
 const Login = ({ navigation }) => {
   const [passwordIsVisible, setPasswordIsVisible] = useState(false);
@@ -45,7 +46,9 @@ const Login = ({ navigation }) => {
           password: formik.values.password,
         });
 
-        const res = await fetch("http://127.0.0.1:8000/api/v1/users/login", {
+        console.log("BODY", jsonBody);
+
+        const res = await fetch(`${path}users/login`, {
           method: "POST",
           body: jsonBody,
           headers: {
@@ -58,9 +61,9 @@ const Login = ({ navigation }) => {
           await AsyncStorage.setItem("token", data.data.token);
           dispatch(fetchCurrentUser());
           dispatch(fetchUsers());
-          console.log("All dispatched after login");
         } else {
           console.log("Error");
+          console.log("error data ", data);
         }
       } catch (err) {
         console.log("Error: ", err.message);

@@ -10,8 +10,11 @@ import React, { useState } from "react";
 import ChangeAvatar from "../ui/ChangeAvatar";
 import postImage from "../../utils/postImage";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useDispatch } from "react-redux";
+import { fetchCurrentUser } from "../../store/currentUserReducer";
+import { path } from "../../utils/apiRoutes";
 
-const EditAccount = ({ route }) => {
+const EditAccount = ({ route, navigation }) => {
   const { user } = route.params;
   const [image, setImage] = useState(user.avatar);
   const [name, setName] = useState(user.name);
@@ -22,6 +25,8 @@ const EditAccount = ({ route }) => {
     shortInfo: true,
   });
   const [showInvalidInputs, setShowInvalidInputs] = useState(false);
+
+  const dispatch = useDispatch();
 
   const changeNameHandler = (text) => {
     setName(text);
@@ -41,27 +46,24 @@ const EditAccount = ({ route }) => {
   };
 
   const editAccountHandler = async () => {
-    console.log(image);
-    console.log(name);
-    console.log(shortInfo);
     if (image.length > 0 && name.length > 5 && shortInfo.length > 10) {
+      const token = await AsyncStorage.getItem("token");
       try {
-        const res = await fetch(
-          "http://127.0.0.1:8000/api/v1/users/editAccount",
-          {
-            headers: {
-              "Content-type": "application/json",
-              Authorization: `Bearer ${AsyncStorage.getItem("token")}`,
-            },
-            body: JSON.stringify({
-              avatar: image,
-              name,
-              shortInfo,
-            }),
-          }
-        );
-        const data = res.json();
-        console.log("Editing completed", data);
+        const res = await fetch(`${path}users/editAccount`, {
+          method: "POST",
+          headers: {
+            "Content-type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            avatar: image,
+            name,
+            shortInfo,
+          }),
+        });
+        const data = await res.json();
+        dispatch(fetchCurrentUser());
+        navigation.goBack();
       } catch (err) {
         console.log("Error 🙈🙈🙈: ", err);
       }
@@ -75,7 +77,7 @@ const EditAccount = ({ route }) => {
       <ChangeAvatar
         setImage={setImage}
         source={{ uri: image || user.avatar }}
-        handleUploadAvatar={(file) => postImage(file, set)}
+        handleUploadAvatar={(file) => postImage(file, setImage)}
       />
 
       <View style={styles.changeContainer}>

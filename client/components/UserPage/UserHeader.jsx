@@ -5,14 +5,15 @@ import { push } from "../../routing/rootNavigation";
 import { useDispatch, useSelector } from "react-redux";
 import { unfriend } from "../../utils/unfriend";
 import { makeFriendsHandler } from "../../utils/makeFriend";
+import { useNavigation } from "@react-navigation/native";
 
 const UserHeader = ({ user, mode = "user", onEditAccount }) => {
   const currentUser = useSelector((state) => state.currentUserReducer.user);
   const [userIsFriend, setUserIsFriend] = useState(false);
   const dispatch = useDispatch();
+  const navigation = useNavigation();
 
   useEffect(() => {
-    console.log(user);
     if (currentUser.friends.find((friend) => friend._id === user._id)) {
       setUserIsFriend(true);
     } else {
@@ -26,6 +27,10 @@ const UserHeader = ({ user, mode = "user", onEditAccount }) => {
     } else {
       makeFriendsHandler(user, setUserIsFriend, dispatch);
     }
+  };
+
+  const openChatHandler = () => {
+    navigation.navigate("Chat screen", { user });
   };
 
   return (
@@ -50,6 +55,7 @@ const UserHeader = ({ user, mode = "user", onEditAccount }) => {
           <Button
             title="Send a message"
             icon={require("../../assets/share.png")}
+            onPress={openChatHandler}
           />
         </View>
       )}

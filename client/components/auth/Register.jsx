@@ -16,6 +16,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useDispatch } from "react-redux";
 import { login, setUser } from "../../store/currentUserReducer";
 import postImage from "../../utils/postImage";
+import { path } from "../../utils/apiRoutes";
 
 const Register = ({ navigation }) => {
   const [avatar, setAvatar] = useState(
@@ -63,7 +64,7 @@ const Register = ({ navigation }) => {
       formData.append("avatar", avatar);
 
       try {
-        const res = await fetch("http://127.0.0.1:8000/api/v1/users/signup", {
+        const res = await fetch(`${path}users/signup`, {
           method: "POST",
           body: formData,
         });

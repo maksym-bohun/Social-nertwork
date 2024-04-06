@@ -1,12 +1,13 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { path } from "../utils/apiRoutes";
 
 // Экшен для асинхронного получения текущего пользователя
 export const fetchCurrentUser = createAsyncThunk(
   "currentUser/fetchCurrentUser",
   async () => {
     const token = await AsyncStorage.getItem("token");
-    const res = await fetch("http://127.0.0.1:8000/api/v1/users/me", {
+    const res = await fetch(`${path}users/me`, {
       headers: {
         "Content-type": "application/json",
         Authorization: `Bearer ${token}`,
@@ -29,17 +30,19 @@ const currentUserSlice = createSlice({
       state.loggedIn = true;
       state.user = action.payload;
     },
-    likePost: (state, action) => {
-      if (state.user.likedPosts) {
-        state.user.likedPosts.push(action.payload);
-      }
-    },
-    dislikePost: (state, action) => {
-      if (state.user) {
-        const indexInArray = state.user.likedPosts.indexOf(action.payload);
-        state.user.likedPosts.splice(indexInArray, 1);
-      }
-    },
+    // likePost: (state, action) => {
+    //   if (state.user.likedPosts) {
+    //     state.user.likedPosts.push(action.payload);
+    //   }
+    // },
+    // dislikePost: (state, action) => {
+    //   if (state.user) {
+    //     console.log("indexInArray ", state.user.likedPosts);
+    //     const indexInArray = state.user.likedPosts.indexOf(action.payload);
+
+    //     state.user.likedPosts.splice(indexInArray, 1);
+    //   }
+    // },
     login: (state) => {
       state.loggedIn = true;
     },
@@ -66,6 +69,9 @@ const currentUserSlice = createSlice({
   },
 });
 
-export const { setUser, likePost, dislikePost, logout } =
-  currentUserSlice.actions;
+export const {
+  setUser,
+  // likePost, dislikePost,
+  logout,
+} = currentUserSlice.actions;
 export default currentUserSlice.reducer;

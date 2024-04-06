@@ -213,6 +213,14 @@ function HomeScreen({ currentUser }) {
           key: route.params.key, // Установите ключ здесь
         })}
       />
+      <Stack.Screen
+        component={Chat}
+        name="Chat screen"
+        options={({ route }) => ({
+          title: route.params.user.name,
+          headerBackTitle: "Back",
+        })}
+      />
     </Stack.Navigator>
   );
 }
@@ -229,7 +237,7 @@ function ChatTab() {
         component={Chat}
         name="chat"
         options={({ route }) => ({
-          title: route.params.username,
+          title: route.params.user.name,
           headerBackTitle: "Back",
         })}
       />

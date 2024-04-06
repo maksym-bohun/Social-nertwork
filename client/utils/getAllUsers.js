@@ -1,5 +1,7 @@
+import { path } from "./apiRoutes";
+
 export const getAllUsers = async () => {
-  const res = await fetch("http://127.0.0.1:8000/api/v1/users", {
+  const res = await fetch(`${path}users`, {
     headers: {
       "Content-type": "application/json",
     },

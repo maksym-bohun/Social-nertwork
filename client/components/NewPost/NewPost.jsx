@@ -20,6 +20,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useDispatch } from "react-redux";
 import { fetchUsers } from "../../store/usersReducer";
 import { fetchCurrentUser } from "../../store/currentUserReducer";
+import { path } from "../../utils/apiRoutes";
 
 const NewPost = ({ navigation }) => {
   const [image, setImage] = useState(null);
@@ -63,7 +64,7 @@ const NewPost = ({ navigation }) => {
             });
 
       try {
-        const res = await fetch("http://127.0.0.1:8000/api/v1/posts", {
+        const res = await fetch(`${path}posts`, {
           method: "POST",
           body,
           headers: {

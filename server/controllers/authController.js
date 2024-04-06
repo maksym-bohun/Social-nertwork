@@ -1,6 +1,6 @@
 const jwt = require("jsonwebtoken");
 const catchAsync = require("../utils/catchAsync");
-const User = require("../models/User");
+const User = require("../models/userModel");
 const { promisify } = require("util");
 const crypto = require("crypto");
 
@@ -31,15 +31,43 @@ exports.signup = catchAsync(async (req, res, next) => {
     name: req.body.name,
     email: req.body.email,
     password: req.body.password,
-    passwordConfirm: req.body.passwordConfirm,
-    photo: req.file?.filename || undefined,
+    // passwordConfirm: req.body.passwordConfirm,
+    avatar: req.body.avatar || undefined,
+    shortInfo: req.body.shortInfo,
   });
+
+  console.log("NEW USER ", newUser);
 
   createSendToken(newUser, 201, res);
 });
 
+exports.login = catchAsync(async (req, res, next) => {
+  console.log("START LOGIN");
+  const { email, password } = req.body;
+  let currentUser = undefined;
+  console.log("email, password ", req.body);
+
+  if (!password || !email)
+    return next(
+      new AppError(
+        "Please provide your phone number or email and password!",
+        400
+      )
+    );
+
+  currentUser = await User.findOne({ email });
+  console.log("current user ", currentUser);
+  if (
+    !currentUser ||
+    !(await currentUser.correctPassword(password, currentUser.password))
+  ) {
+    return next(new AppError("Incorrect email or password!", 400));
+  }
+
+  createSendToken(currentUser, 200, res);
+});
+
 exports.protect = catchAsync(async (req, res, next) => {
-  console.log("START PROTECTING");
   let token;
   if (
     req.headers.authorization &&
@@ -52,8 +80,8 @@ exports.protect = catchAsync(async (req, res, next) => {
       new AppError("You are not logged in! Please log in to get access.", 401)
     );
   }
-  const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
 
+  const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
   const currentUser = await User.findById(decoded.id);
 
   if (!currentUser) {

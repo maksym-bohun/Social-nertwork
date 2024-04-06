@@ -71,6 +71,8 @@ const styles = StyleSheet.create({
   },
   username: {
     fontSize: 18,
+    flexWrap: "wrap",
+    flex: 1,
   },
   button: {
     backgroundColor: "#8DC6FC",
