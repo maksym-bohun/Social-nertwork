@@ -17,6 +17,7 @@ const postSchema = mongoose.Schema(
         "https://toppng.com/uploads/preview/roger-berry-avatar-placeholder-11562991561rbrfzlng6h.png",
     },
     likes: { type: [mongoose.Schema.ObjectId], ref: "User", default: [] },
+    comments: { type: [mongoose.Schema.ObjectId], ref: "Comment", default: [] },
   },
   { timestamps: true }
 );

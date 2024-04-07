@@ -152,7 +152,9 @@ const Post = ({ post }) => {
         </View>
 
         <Pressable
-          onPress={() => navigation.navigate("Add comment", { postId: "123" })}
+          onPress={() =>
+            navigation.navigate("Add comment", { postId: post._id })
+          }
         >
           <Image
             style={styles.actionIcon}

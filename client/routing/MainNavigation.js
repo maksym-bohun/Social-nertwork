@@ -203,7 +203,11 @@ function HomeScreen({ currentUser }) {
           key: route.params.key,
         })}
       />
-      <Stack.Screen name="Add comment" component={Comment} />
+      <Stack.Screen
+        name="Add comment"
+        component={Comment}
+        options={{ headerBackTitle: "Back" }}
+      />
       <Stack.Screen
         name="Friends List"
         component={FriendsList}

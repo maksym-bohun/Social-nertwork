@@ -15,5 +15,9 @@ router
 router
   .route("/dislike/:id")
   .post(authController.protect, postsController.unlikePost);
+router
+  .route("/addComment/:id")
+  .post(authController.protect, postsController.addComment);
+router.route("/getComments/:id").get(postsController.getGroupOfComments);
 
 module.exports = router;

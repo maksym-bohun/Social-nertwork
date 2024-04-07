@@ -23,9 +23,16 @@ export function formatDate(date) {
   // Get the components of the date
   const year = date.getFullYear();
   const month = date.getMonth();
-  const day = date.getDate();
-  const hours = date.getHours();
-  const minutes = date.getMinutes();
+  const day = date.getUTCDate();
+  let hours = date.getHours();
+  let minutes = date.getMinutes();
+
+  if (hours.toString().length === 1) {
+    hours = "0" + hours;
+  }
+  if (minutes.toString().length === 1) {
+    minutes = "0" + minutes;
+  }
 
   // Format the date string according to the desired format
   const formattedDate = `${months[month]} ${day}, ${year} ${hours}:${minutes}`;
