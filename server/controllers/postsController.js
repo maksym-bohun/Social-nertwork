@@ -87,3 +87,11 @@ exports.getGroupOfComments = catchAsync(async (req, res, next) => {
     comments: result,
   });
 });
+
+exports.deleteComment = catchAsync(async (req, res, next) => {
+  await Post.findByIdAndUpdate(req.params.postId, {
+    $pull: { comments: req.params.commentId },
+  });
+  await Comment.findByIdAndRemove(req.params.commentId);
+  res.status(200).json({ status: "success" });
+});

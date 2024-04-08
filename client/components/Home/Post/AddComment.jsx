@@ -12,21 +12,7 @@ import { path } from "../../../utils/apiRoutes";
 import { formatDate } from "../../../utils/formatDate";
 import { useDispatch } from "react-redux";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-
-const renderComments = ({ item }) => {
-  return (
-    <View style={styles.commentContainer}>
-      <Image source={{ uri: item.author.avatar }} style={styles.avatar} />
-      <View style={styles.commentBody}>
-        <Text style={styles.username}>{item.author.name}</Text>
-        <Text style={styles.commentText}>{item.text}</Text>
-      </View>
-      <View style={styles.date}>
-        <Text>{formatDate(item.createdAt).slice(0, -5)}</Text>
-      </View>
-    </View>
-  );
-};
+import CommentItem from "./CommentItem";
 
 const fetchComments = async (postId, setComments) => {
   const res = await fetch(`${path}posts/getComments/${postId}`);
@@ -37,26 +23,51 @@ const fetchComments = async (postId, setComments) => {
 const AddComment = ({ route, navigation }) => {
   const [inputValue, setInputValue] = useState("");
   const [comments, setComments] = useState([]);
-  const dispatch = useDispatch();
+  const { postId, postAuthorId } = route.params;
 
   useEffect(() => {
-    fetchComments(route.params.postId, setComments);
+    fetchComments(postId, setComments);
   }, []);
 
-  const addComment = async () => {
+  const renderComments = (itemData) => {
+    return (
+      <CommentItem
+        item={itemData.item}
+        onDeleteComment={deleteCommentHandler}
+        postAuthorId={postAuthorId}
+      />
+    );
+  };
+
+  const deleteCommentHandler = async (comment) => {
+    const token = await AsyncStorage.getItem("token");
+    const res = await fetch(
+      `${path}posts/deleteComment/${postId}/${comment._id}`,
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      }
+    );
+    const data = await res.json();
+    if (data.status === "success") {
+      setComments((prevComments) =>
+        prevComments.filter(
+          (currentComment) => currentComment._id !== comment._id
+        )
+      );
+    }
+  };
+
+  const addCommentHandler = async () => {
     const token = await AsyncStorage.getItem("token");
     if (inputValue !== "") {
-      const res = await fetch(
-        `${path}posts/addComment/${route.params.postId}`,
-        {
-          method: "POST",
-          body: JSON.stringify({ text: inputValue }),
-          headers: {
-            "Content-type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      const res = await fetch(`${path}posts/addComment/${postId}`, {
+        method: "POST",
+        body: JSON.stringify({ text: inputValue }),
+        headers: {
+          "Content-type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
       const data = await res.json();
       console.log("data ", data);
       if (data.status === "success") {
@@ -88,7 +99,7 @@ const AddComment = ({ route, navigation }) => {
         <Input
           inputValue={inputValue}
           setInputValue={setInputValue}
-          submitInputHandler={addComment}
+          submitInputHandler={addCommentHandler}
         />
       </View>
     </SafeAreaView>
@@ -103,30 +114,6 @@ const styles = StyleSheet.create({
   },
   commentsList: {
     flex: 1,
-  },
-  commentContainer: {
-    flexDirection: "row",
-    // alignItems: "center",
-    marginVertical: 10,
-    gap: 10,
-    flex: 1,
-  },
-  avatar: {
-    width: 50,
-    height: 50,
-    borderRadius: 60,
-  },
-  username: {
-    fontSize: 18,
-    fontWeight: "500",
-  },
-  commentBody: {
-    flex: 1,
-  },
-  date: { alignSelf: "center" },
-  commentText: {
-    fontSize: 16,
-    marginTop: 5,
   },
   noCommentsContainer: {
     position: "absolute",

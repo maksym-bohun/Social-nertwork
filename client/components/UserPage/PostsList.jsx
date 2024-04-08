@@ -6,9 +6,11 @@ import { Feather } from "@expo/vector-icons";
 const PostsList = ({ posts }) => {
   return (
     <View style={styles.listContainer}>
-      {posts.map((post) => (
-        <Post post={post} key={post._id} />
-      ))}
+      {[...posts]
+        .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+        .map((post) => (
+          <Post post={post} key={post._id} />
+        ))}
       {posts.length === 0 && (
         <View style={styles.emptyContainer}>
           <Feather name="camera" size={50} color="#ccc" />

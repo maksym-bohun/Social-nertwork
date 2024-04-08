@@ -18,6 +18,9 @@ router
 router
   .route("/addComment/:id")
   .post(authController.protect, postsController.addComment);
+router
+  .route("/deleteComment/:postId/:commentId")
+  .get(authController.protect, postsController.deleteComment);
 router.route("/getComments/:id").get(postsController.getGroupOfComments);
 
 module.exports = router;

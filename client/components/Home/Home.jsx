@@ -20,7 +20,7 @@ const Home = ({ route, navigation }) => {
   const postsToShow = [...currentUser.posts];
   allUsers.map((user) => {
     if (currentUser.friends.find((friend) => friend._id === user._id)) {
-      user.posts.map((post) => postsToShow.push(post));
+      user.posts?.map((post) => postsToShow.push(post));
     }
   });
 

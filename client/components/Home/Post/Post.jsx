@@ -51,7 +51,6 @@ const Post = ({ post }) => {
         },
       });
       const data = await res.json();
-      console.log("DISLIKE DATA ", data);
     } else {
       // dispatch(likePost(post._id));
       const res = await fetch(`${path}posts/like/${post._id}`, {
@@ -153,7 +152,10 @@ const Post = ({ post }) => {
 
         <Pressable
           onPress={() =>
-            navigation.navigate("Add comment", { postId: post._id })
+            navigation.navigate("Add comment", {
+              postId: post._id,
+              postAuthorId: post.author._id,
+            })
           }
         >
           <Image
