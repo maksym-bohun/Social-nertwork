@@ -14,14 +14,18 @@ import { fetchUsers } from "../../../store/usersReducer";
 // import { dislikePost, likePost } from "../../../store/currentUserReducer";
 import { path } from "../../../utils/apiRoutes";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { fetchCurrentUser } from "../../../store/currentUserReducer";
+import { fetchPosts } from "../../../store/postsReducer";
 
-const Post = ({ post }) => {
-  useEffect(() => {}, []);
+const Post = ({ postId }) => {
   const currentUser = useSelector((state) => state.currentUserReducer.user);
+  const currentPost = useSelector((state) =>
+    state.postsReducer.posts.find((post) => post._id === postId)
+  );
   const [showAllText, setShowAllText] = useState(false);
   const [lengthMore, setLengthMore] = useState(false);
   const [postIsLiked, setPostIsLiked] = useState(false);
-  let likes = post.likes?.length || 0;
+  const [likes, setLikes] = useState("0");
   let lastClickTime = 0;
 
   const navigation = useNavigation();
@@ -33,77 +37,80 @@ const Post = ({ post }) => {
 
   const likePostHandler = async () => {
     const currentTime = Date.now();
-    const timeDifference = currentTime - lastClickTime;
-    if (timeDifference < 1000) {
-      return;
-    }
-    lastClickTime = currentTime;
+    // const timeDifference = currentTime - lastClickTime;
+    // if (timeDifference < 1000) {
+    //   return;
+    // }
+    // lastClickTime = currentTime;
 
     const token = await AsyncStorage.getItem("token");
     if (postIsLiked) {
       console.log("Start dislike");
-      // dispatch(dislikePost(post._id));
-      const res = await fetch(`${path}posts/dislike/${post._id}`, {
+      await fetch(`${path}posts/dislike/${postId}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
       });
-      const data = await res.json();
     } else {
-      // dispatch(likePost(post._id));
-      const res = await fetch(`${path}posts/like/${post._id}`, {
+      await fetch(`${path}posts/like/${postId}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
       });
-      const data = await res.json();
-      console.log("LIKE DATA ", data);
     }
     setPostIsLiked(!postIsLiked);
-
+    setLikes(currentPost.likes.length);
     dispatch(fetchUsers());
+    dispatch(fetchPosts());
+    if (currentPost.author._id === currentUser._id)
+      dispatch(fetchCurrentUser());
   };
 
   const toggleNumberOfLines = () => {
-    //To toggle the show text or hide it
     setShowAllText(!showAllText);
   };
 
   useEffect(() => {
-    if (post.likes && post.likes?.find((like) => like === currentUser._id)) {
+    if (
+      currentPost.likes &&
+      currentPost.likes?.find((like) => like === currentUser._id)
+    ) {
       setPostIsLiked(true);
     } else {
       setPostIsLiked(false);
     }
-  }, [post]);
+    setLikes(currentPost.likes.length);
+  }, [currentPost]);
 
   const sendPostHandler = () => {};
 
   return (
-    <View style={styles.post} key={post._id}>
+    <View style={styles.post} key={postId}>
       <View style={styles.postInfo}>
         <TouchableOpacity
           style={styles.authorInfo}
           onPress={() =>
             navigation.navigate(
-              currentUser._id === post.author._id ? "Account" : "User page",
-              { user: post.author }
+              currentUser._id === currentPost.author._id
+                ? "Account"
+                : "User page",
+              { user: currentPost.author }
             )
           }
         >
           <Image
             style={styles.avatar}
             source={{
-              uri: post.author?.avatar,
+              uri: currentPost.author?.avatar,
             }}
           />
           <View>
-            <Text style={styles.username}>{post.author?.name}</Text>
-            <Text>{formatDate(post.createdAt)}</Text>
+            <Text style={styles.username}>{currentPost.author?.name}</Text>
+            <Text>{formatDate(currentPost.createdAt)}</Text>
           </View>
         </TouchableOpacity>
 
@@ -113,7 +120,7 @@ const Post = ({ post }) => {
             numberOfLines={showAllText ? undefined : 3}
             style={{ lineHeight: 21, fontSize: 16 }}
           >
-            {post.text}
+            {currentPost.text}
           </Text>
           {lengthMore ? (
             <Text
@@ -128,9 +135,9 @@ const Post = ({ post }) => {
           ) : null}
         </View>
 
-        {post.image && (
+        {currentPost.image && (
           <View style={styles.imageContainer}>
-            <Image source={{ uri: post.image }} style={styles.image} />
+            <Image source={{ uri: currentPost.image }} style={styles.image} />
           </View>
         )}
       </View>
@@ -153,8 +160,8 @@ const Post = ({ post }) => {
         <Pressable
           onPress={() =>
             navigation.navigate("Add comment", {
-              postId: post._id,
-              postAuthorId: post.author._id,
+              postId: postId,
+              postAuthorId: currentPost.author._id,
             })
           }
         >

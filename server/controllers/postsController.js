@@ -20,12 +20,14 @@ exports.createPost = catchAsync(async (req, res, next) => {
 });
 
 exports.getAllPosts = catchAsync(async (req, res, next) => {
-  const posts = Post.find().populate("author").select("name image posts");
-  res.status(200).json({ status: "success", data: { posts } });
+  const posts = await Post.find().populate({
+    path: "author",
+    select: "name avatar posts",
+  });
+  res.status(200).json({ status: "success", posts });
 });
 
 exports.likePost = catchAsync(async (req, res, next) => {
-  console.log("LIKE POST");
   const postId = req.params.id;
   const post = await Post.findById(postId);
   if (!post.likes.includes(req.user._id)) {
@@ -39,7 +41,6 @@ exports.likePost = catchAsync(async (req, res, next) => {
 });
 
 exports.unlikePost = catchAsync(async (req, res, next) => {
-  console.log("UNLIKE");
   const postId = req.params.id;
   await Post.findByIdAndUpdate(postId, {
     $pull: { likes: req.user._id },

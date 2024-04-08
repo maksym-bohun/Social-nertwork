@@ -71,7 +71,7 @@ const Home = ({ route, navigation }) => {
         data={postsToShow.sort(
           (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
         )}
-        renderItem={({ item }) => <Post post={item} />}
+        renderItem={({ item }) => <Post postId={item._id} />}
         keyExtractor={(item) => item._id}
         style={{ marginBottom: 45 }}
       />

@@ -7,6 +7,7 @@ import { fetchCurrentUser, setUser } from "../store/currentUserReducer";
 import { fetchUsers, setUsers } from "../store/usersReducer";
 import { navigationRef } from "./rootNavigation";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { fetchPosts } from "../store/postsReducer";
 
 export const Router = () => {
   const dispatch = useDispatch();
@@ -17,6 +18,7 @@ export const Router = () => {
 
   useEffect(() => {
     dispatch(fetchUsers());
+    dispatch(fetchPosts());
     if (AsyncStorage.getItem("token") && AsyncStorage.getItem("token") !== "") {
       dispatch(fetchCurrentUser());
     }

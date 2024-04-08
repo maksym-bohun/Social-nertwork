@@ -9,7 +9,7 @@ const PostsList = ({ posts }) => {
       {[...posts]
         .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
         .map((post) => (
-          <Post post={post} key={post._id} />
+          <Post postId={post._id} />
         ))}
       {posts.length === 0 && (
         <View style={styles.emptyContainer}>
