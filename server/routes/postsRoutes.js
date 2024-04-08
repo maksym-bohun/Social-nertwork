@@ -22,5 +22,8 @@ router
   .route("/deleteComment/:postId/:commentId")
   .get(authController.protect, postsController.deleteComment);
 router.route("/getComments/:id").get(postsController.getGroupOfComments);
+router
+  .route("/getNotifications")
+  .get(authController.protect, postsController.getNotifications);
 
 module.exports = router;

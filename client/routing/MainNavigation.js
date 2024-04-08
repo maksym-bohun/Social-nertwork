@@ -24,6 +24,7 @@ import { useEffect } from "react";
 import { logout, setUser } from "../store/currentUserReducer";
 import { MaterialIcons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import Notifications from "../components/Notifications/Notifications";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -102,6 +103,19 @@ function DrawerPage() {
           ),
         }}
       />
+      <Drawer.Screen
+        name="Notifications"
+        component={Notifications}
+        options={{
+          title: "Notifications",
+          drawerIcon: () => (
+            <Image
+              style={{ height: 22, width: 22 }}
+              source={require("../assets/bell.png")}
+            />
+          ),
+        }}
+      />
     </Drawer.Navigator>
   );
 }
@@ -112,7 +126,7 @@ function EditAccountScreen() {
   return (
     <Drawer.Navigator initialRouteName="Account">
       <Drawer.Screen
-        name="Oleksandr Usyk"
+        name="User"
         component={Login}
         options={{
           drawerLabel: () => (
@@ -161,6 +175,19 @@ function EditAccountScreen() {
           ),
         }}
       />
+      <Drawer.Screen
+        name="Notifications"
+        component={Notifications}
+        options={{
+          title: "Notifications",
+          drawerIcon: () => (
+            <Image
+              style={{ height: 22, width: 22 }}
+              source={require("../assets/bell.png")}
+            />
+          ),
+        }}
+      />
     </Drawer.Navigator>
   );
 }
@@ -203,11 +230,7 @@ function HomeScreen({ currentUser }) {
           key: route.params.key,
         })}
       />
-      <Stack.Screen
-        name="Add comment"
-        component={Comment}
-        options={{ headerBackTitle: "Back" }}
-      />
+      <Stack.Screen name="Add comment" component={Comment} />
       <Stack.Screen
         name="Friends List"
         component={FriendsList}

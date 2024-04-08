@@ -32,6 +32,11 @@ const userSchema = new mongoose.Schema({
     ref: "Chat",
     default: [],
   },
+  notifications: {
+    type: [mongoose.Schema.ObjectId],
+    ref: "Notification",
+    default: [],
+  },
   passwordChangedAt: { type: Date, default: Date.now() },
   passwordResetToken: { type: String },
   passwordResetExpires: { type: Date },
