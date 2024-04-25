@@ -10,7 +10,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import * as ImagePicker from "expo-image-picker";
 import { AntDesign } from "@expo/vector-icons";
 import { FontAwesome5 } from "@expo/vector-icons";
@@ -110,17 +110,20 @@ const NewPost = ({ navigation }) => {
           />
         </View>
         {!image && (
-          <TouchableOpacity
-            onPress={imagePicker}
-            style={styles.imagePickerContainer}
-          >
-            <Text style={styles.label}>Press to upload image</Text>
-            <Image
-              style={{ height: 70, width: 70 }}
-              source={require("../../assets/upload.png")}
-            />
-          </TouchableOpacity>
+          <>
+            <TouchableOpacity
+              onPress={imagePicker}
+              style={styles.imagePickerContainer}
+            >
+              <Text style={styles.label}>Press to upload image</Text>
+              <Image
+                style={{ height: 70, width: 70 }}
+                source={require("../../assets/upload.png")}
+              />
+            </TouchableOpacity>
+          </>
         )}
+
         {image && (
           <View
             style={[styles.imagePickerContainer, styles.imageUploadedContainer]}

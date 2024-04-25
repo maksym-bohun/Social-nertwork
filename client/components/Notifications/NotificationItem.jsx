@@ -1,11 +1,18 @@
-import { Image, StyleSheet, Text, View } from "react-native";
+import { Image, Pressable, StyleSheet, Text, View } from "react-native";
 import React from "react";
+import { useNavigation } from "@react-navigation/native";
 
 const NotificationItem = ({ item }) => {
-  console.log("item ", item);
-
+  const navigation = useNavigation();
+  console.log("notification item");
   return (
-    <View style={styles.container} key={item._id}>
+    <Pressable
+      style={styles.container}
+      key={item._id}
+      onPress={() => {
+        navigation.navigate("Post", { postId: item.post._id });
+      }}
+    >
       <View style={styles.avatarContainer}>
         <Image
           source={{
@@ -31,7 +38,7 @@ const NotificationItem = ({ item }) => {
           />
         </View>
       )}
-    </View>
+    </Pressable>
   );
 };
 

@@ -16,12 +16,21 @@ import { path } from "../../../utils/apiRoutes";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { fetchCurrentUser } from "../../../store/currentUserReducer";
 import { fetchPosts } from "../../../store/postsReducer";
+import { push } from "../../../routing/rootNavigation";
 
-const Post = ({ postId }) => {
+const Post = ({ postId, post = null }) => {
   const currentUser = useSelector((state) => state.currentUserReducer.user);
-  const currentPost = useSelector((state) =>
-    state.postsReducer.posts.find((post) => post._id === postId)
-  );
+  let currentPost;
+  if (!post) {
+    currentPost = useSelector((state) =>
+      state.postsReducer.posts.find((post) => post._id === postId)
+    );
+  } else {
+    currentPost = post;
+  }
+
+  if (!currentPost) return;
+
   const [showAllText, setShowAllText] = useState(false);
   const [lengthMore, setLengthMore] = useState(false);
   const [postIsLiked, setPostIsLiked] = useState(false);
@@ -54,6 +63,8 @@ const Post = ({ postId }) => {
         },
       });
     } else {
+      console.log("START LIKE");
+
       await fetch(`${path}posts/like/${postId}`, {
         method: "POST",
         headers: {
@@ -86,7 +97,11 @@ const Post = ({ postId }) => {
     setLikes(currentPost.likes.length);
   }, [currentPost]);
 
-  const sendPostHandler = () => {};
+  const sendPostHandler = () => {
+    push("Friends List to Share", { postId });
+  };
+
+  console.log("CURRENT POST ", currentPost);
 
   return (
     <View style={styles.post} key={postId}>
@@ -154,13 +169,15 @@ const Post = ({ postId }) => {
               }
             />
           </Pressable>
-          <Text style={{ fontSize: 16, fontWeight: "500" }}>{likes}</Text>
+          <Text style={{ fontSize: 16, fontWeight: "500", minWidth: 10 }}>
+            {likes}
+          </Text>
         </View>
 
         <Pressable
           onPress={() =>
             navigation.navigate("Add comment", {
-              postId: postId,
+              postId,
               postAuthorId: currentPost.author._id,
             })
           }

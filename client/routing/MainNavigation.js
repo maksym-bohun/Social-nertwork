@@ -25,6 +25,8 @@ import { logout, setUser } from "../store/currentUserReducer";
 import { MaterialIcons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Notifications from "../components/Notifications/Notifications";
+import PostScreen from "../components/Post/PostScreen";
+import FriendsListToShare from "../components/SendPost/FriendsList";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -205,14 +207,11 @@ function AccountStack() {
   );
 }
 
-function HomeScreen({ currentUser }) {
+function createStackNavigator(aditionalRoutes = [], route) {
   return (
-    <Stack.Navigator initialRouteName="Home page">
-      <Stack.Screen
-        component={DrawerPage}
-        name="Home page"
-        options={{ headerShown: false }}
-      />
+    <Stack.Navigator>
+      {aditionalRoutes.map((route) => route)}
+
       <Stack.Screen
         name="User page"
         component={UserPage}
@@ -248,29 +247,54 @@ function HomeScreen({ currentUser }) {
           headerBackTitle: "Back",
         })}
       />
+      <Stack.Screen
+        component={PostScreen}
+        name="Post"
+        options={{
+          headerBackTitle: "Back",
+        }}
+      />
+      <Stack.Screen
+        component={FriendsListToShare}
+        name="Friends List to Share"
+        options={{
+          title: "Share post",
+          headerBackTitle: "Back",
+          animation: "slide_from_bottom",
+        }}
+      />
     </Stack.Navigator>
   );
 }
 
-function ChatTab() {
-  return (
-    <Stack.Navigator>
+function HomeScreen({ currentUser, route }) {
+  return createStackNavigator(
+    [
+      <Stack.Screen
+        component={DrawerPage}
+        name="Home page"
+        options={{ headerShown: false }}
+        key={Math.random()}
+      />,
+    ],
+    route
+  );
+}
+
+function ChatTab({ route }) {
+  return createStackNavigator(
+    [
       <Stack.Screen
         component={Chats}
         name="Chats Screen"
+        key={Math.random()}
         // options={{ headerShown: false }}
-      />
-      <Stack.Screen
-        component={Chat}
-        name="chat"
-        options={({ route }) => ({
-          title: route.params.user.name,
-          headerBackTitle: "Back",
-        })}
-      />
-    </Stack.Navigator>
+      />,
+    ],
+    route
   );
 }
+
 function TabNavigation({ currentUser }) {
   return (
     <Tab.Navigator

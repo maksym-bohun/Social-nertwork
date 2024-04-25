@@ -11,17 +11,25 @@ const ChatPreview = ({ item }) => {
   const friend = item.users.find((user) => user._id !== currentUser._id);
 
   let date;
+
   if (
-    new Date().getDate() !== new Date(item.updatedAt).getDate() ||
+    new Date().getUTCDate(date) !== new Date(item.updatedAt).getUTCDate() ||
     (new Date() - new Date(item.updatedAt)) / (1000 * 60 * 60) > 24
   ) {
-    date =
-      new Date(item.updatedAt).getDate() + new Date(item.updatedAt).getMonth();
+    const month =
+      new Date(item.updatedAt).getMonth().toString().length === 1
+        ? "0" + new Date(item.updatedAt).getMonth().toString()
+        : new Date(item.updatedAt).getMonth().toString();
+    date = new Date(item.updatedAt).getUTCDate() + "." + month;
   } else {
+    let hours = new Date(item.updatedAt).getHours();
+    if (hours.toString().length < 2) hours = "0" + hours;
     let minutes = new Date(item.updatedAt).getMinutes();
     if (minutes.toString().length < 2) minutes = "0" + minutes;
-    date = `${new Date(item.updatedAt).getHours()}:${minutes}`;
+    date = hours + ":" + minutes;
   }
+
+  console.log("date ", date);
 
   return (
     <Pressable
@@ -29,7 +37,7 @@ const ChatPreview = ({ item }) => {
         styles.chatContainer,
         pressed ? styles.pressed : "",
       ]}
-      onPress={() => navigation.navigate("chat", { user: friend })}
+      onPress={() => navigation.navigate("Chat screen", { user: friend })}
     >
       <View style={styles.avatarContainer}>
         <Image source={{ uri: friend.avatar }} style={styles.avatar} />
@@ -37,9 +45,21 @@ const ChatPreview = ({ item }) => {
 
       <View style={styles.chatBody}>
         <Text style={styles.senderName}>{friend.name}</Text>
-        <Text style={styles.message} numberOfLines={1} ellipsizeMode="tail">
-          {item.lastMessage}
-        </Text>
+        {!item.lastMessageIsPost && (
+          <Text style={styles.message} numberOfLines={1} ellipsizeMode="tail">
+            {item.lastMessage}
+          </Text>
+        )}
+
+        {item.lastMessageIsPost && (
+          <Text
+            style={[styles.message, { fontWeight: "600" }]}
+            numberOfLines={1}
+            ellipsizeMode="tail"
+          >
+            Post
+          </Text>
+        )}
       </View>
 
       <View style={styles.chatInfo}>
