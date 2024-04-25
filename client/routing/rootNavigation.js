@@ -13,6 +13,7 @@ export function replace(name, params) {
   navigationRef.current?.dispatch(StackActions.replace(name, params));
 }
 export function push(name, params) {
+  console.log("PuuSSHH");
   navigationRef.current?.dispatch(StackActions.push(name, params));
 }
 export function goBack() {

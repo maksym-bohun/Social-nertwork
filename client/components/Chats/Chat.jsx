@@ -7,10 +7,14 @@ import axios from "axios";
 import { fetchCurrentUser } from "../../store/currentUserReducer";
 import { io } from "socket.io-client";
 import { path } from "../../utils/apiRoutes";
+import { checkChat } from "./../../utils/checkChat";
+import { createChat } from "../../utils/createChat";
+import PostMessage from "./PostMessage";
 
 const renderChatItem = (userId, itemData) => {
   return (
     <View
+      key={itemData.item._id}
       style={[
         styles.messageContainer,
         itemData.item.sender == userId
@@ -18,53 +22,24 @@ const renderChatItem = (userId, itemData) => {
           : styles.messageToCurrentUser,
       ]}
     >
-      <Text style={styles.messageText}>{itemData.item.message}</Text>
+      {itemData.item.messageType === "text" && (
+        <Text style={styles.messageText}>{itemData.item.message}</Text>
+      )}
+      {itemData.item.messageType === "post" && (
+        <PostMessage postId={itemData.item.message} />
+      )}
       {/* <Text style={styles.time}></Text> */}
     </View>
   );
 };
 
-const checkChat = async (currentUserId, userId) => {
-  const res = await fetch(`${path}chats/checkChat`, {
-    method: "POST",
-    body: JSON.stringify({
-      sender: currentUserId,
-      receiver: userId,
-    }),
-    headers: {
-      "Content-type": "application/json",
-    },
-  });
-
-  const data = await res.json();
-  return data;
-};
-
-const createChat = async (currentUserId, userId, message) => {
-  const res = await fetch(`${path}chats/`, {
-    method: "POST",
-    body: JSON.stringify({
-      sender: currentUserId,
-      receiver: userId,
-      lastMessage: message,
-    }),
-    headers: {
-      "Content-type": "application/json",
-    },
-  });
-
-  const data = await res.json();
-  return data.chat;
-};
-
 async function createMessage(sender, receiver, message, chatId, socket) {
-  console.log("sender ", sender);
-  console.log("receiver ", receiver);
   const { data } = await axios.post(`${path}chats/addMessage`, {
     sender,
     receiver,
     message,
     chatId,
+    messageType: "text",
   });
   socket.emit("send-message", {
     from: sender,
@@ -143,22 +118,30 @@ const Chat = ({ route, navigation }) => {
 
     await createMessage(currentUser._id, friendId, inputValue, chatId, socket);
 
-    setMessages((prevMessages) => [
-      ...prevMessages,
-      { senderId: currentUser._id, message: inputValue, id: v4() },
-    ]);
+    const newMessage = {
+      senderId: currentUser._id,
+      message: inputValue,
+      id: v4(),
+      messageType: "text",
+    };
+    setMessages((prevMessages) => [...prevMessages, newMessage]);
     setInputValue("");
   };
+
+  useEffect(() => {
+    console.log("messages ", messages);
+  }, [messages]);
 
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.messagesContainer}>
         <View>
           <FlatList
-            data={messages}
             renderItem={(itemData) => renderChatItem(friendId, itemData)}
             style={styles.list}
             keyExtractor={(item) => item._id}
+            inverted
+            data={[...messages].reverse()}
           />
         </View>
       </View>
@@ -177,6 +160,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
+  list: { height: "100%" },
   header: {
     flexDirection: "row",
     alignItems: "center",

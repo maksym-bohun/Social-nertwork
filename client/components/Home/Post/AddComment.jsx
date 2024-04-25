@@ -1,4 +1,5 @@
 import {
+  ActivityIndicator,
   FlatList,
   Image,
   SafeAreaView,
@@ -9,24 +10,25 @@ import {
 import React, { useEffect, useState } from "react";
 import Input from "../../ui/Input";
 import { path } from "../../../utils/apiRoutes";
-import { formatDate } from "../../../utils/formatDate";
-import { useDispatch } from "react-redux";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import CommentItem from "./CommentItem";
 
-const fetchComments = async (postId, setComments) => {
+const fetchComments = async (postId, setComments, setIsLoading) => {
+  setIsLoading(true);
   const res = await fetch(`${path}posts/getComments/${postId}`);
   const data = await res.json();
   setComments(data.comments);
+  setIsLoading(false);
 };
 
-const AddComment = ({ route, navigation }) => {
+const AddComment = ({ route }) => {
   const [inputValue, setInputValue] = useState("");
   const [comments, setComments] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
   const { postId, postAuthorId } = route.params;
 
   useEffect(() => {
-    fetchComments(postId, setComments);
+    fetchComments(postId, setComments, setIsLoading);
   }, []);
 
   const renderComments = (itemData) => {
@@ -77,24 +79,33 @@ const AddComment = ({ route, navigation }) => {
     }
   };
 
+  console.log("comments", comments);
+
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.commentsList}>
-        {comments.length !== 0 && (
-          <FlatList
-            data={comments.sort(
-              (a, b) => new Date(a.createdAt) - new Date(b.createdAt)
-            )}
-            renderItem={renderComments}
-            style={{ paddingHorizontal: 10 }}
-          />
-        )}
-        {comments.length === 0 && (
-          <View style={styles.noCommentsContainer}>
-            <Text style={styles.noCommentsText}>No comments yet</Text>
-          </View>
-        )}
-      </View>
+      {isLoading && (
+        <View style={{ flex: 1, justifyContent: "center" }}>
+          <ActivityIndicator size="large" />
+        </View>
+      )}
+      {!isLoading && (
+        <View style={styles.commentsList}>
+          {comments.length !== 0 && (
+            <FlatList
+              data={comments.sort(
+                (a, b) => new Date(a.createdAt) - new Date(b.createdAt)
+              )}
+              renderItem={renderComments}
+              style={{ paddingHorizontal: 10 }}
+            />
+          )}
+          {comments.length === 0 && (
+            <View style={styles.noCommentsContainer}>
+              <Text style={styles.noCommentsText}>No comments yet</Text>
+            </View>
+          )}
+        </View>
+      )}
       <View style={styles.input}>
         <Input
           inputValue={inputValue}
