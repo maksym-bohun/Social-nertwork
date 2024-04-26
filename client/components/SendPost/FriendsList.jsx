@@ -61,7 +61,6 @@ const renderFriend = (item, selectedFriends, setSelectedFriends) => {
 };
 
 async function createMessage(sender, receiver, postId, chatId, socket) {
-  console.log("receiver ", receiver);
   const { data } = await axios.post(`${path}chats/addMessage`, {
     sender,
     receiver,
@@ -79,11 +78,9 @@ async function createMessage(sender, receiver, postId, chatId, socket) {
 const fetchChat = async (currentUserId, friendId, postId) => {
   const res = await checkChat(currentUserId, friendId);
   if (res && res.status === "success") {
-    console.log("return ", res.chat._id);
     return res.chat._id;
   } else {
     const newChatId = await createChat(currentUserId, friendId, postId, "post");
-    console.log("return ", newChatId);
     return newChatId;
   }
 };
@@ -114,9 +111,8 @@ export default function FriendsListToShare({ route }) {
   const sendPostHandler = async () => {
     for (let index in selectedFriends) {
       chatId = await fetchChat(currentUser._id, selectedFriends[index], postId);
-      console.log("chatId ", chatId);
       createMessage(
-        currentUser,
+        currentUser._id,
         selectedFriends[index],
         postId,
         chatId,
@@ -124,6 +120,7 @@ export default function FriendsListToShare({ route }) {
       );
     }
     goBack();
+    dispatch(fetchCurrentUser());
   };
 
   return (

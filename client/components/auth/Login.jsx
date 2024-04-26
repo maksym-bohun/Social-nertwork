@@ -6,6 +6,7 @@ import {
   Pressable,
   TouchableOpacity,
   KeyboardAvoidingView,
+  ActivityIndicator,
 } from "react-native";
 import React, { useState } from "react";
 import { useFormik } from "formik";
@@ -14,11 +15,12 @@ import PasswordInput from "../ui/PasswordInput";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useDispatch } from "react-redux";
 import { fetchCurrentUser, setUser } from "../../store/currentUserReducer";
-import { fetchUsers } from "../../store/usersReducer";
+import { fetchFriends, fetchUsers } from "../../store/usersReducer";
 import { path } from "../../utils/apiRoutes";
 
 const Login = ({ navigation }) => {
   const [passwordIsVisible, setPasswordIsVisible] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const dispatch = useDispatch();
 
@@ -39,6 +41,7 @@ const Login = ({ navigation }) => {
       const formData = new FormData();
       formData.append("email", formik.values.email);
       formData.append("password", formik.values.password);
+      setIsLoading(true);
 
       try {
         const jsonBody = JSON.stringify({
@@ -61,75 +64,83 @@ const Login = ({ navigation }) => {
           await AsyncStorage.setItem("token", data.data.token);
           dispatch(fetchCurrentUser());
           dispatch(fetchUsers());
+          dispatch(fetchFriends());
         } else {
           console.log("Error");
           console.log("error data ", data);
         }
       } catch (err) {
         console.log("Error: ", err.message);
+      } finally {
+        setIsLoading(false);
       }
     },
   });
 
   return (
     <KeyboardAvoidingView style={styles.container} behavior="padding">
-      <View style={styles.form}>
-        {/* Email */}
-        <View style={styles.inputContainer}>
-          <TextInput
-            style={styles.input}
-            placeholder="Email"
-            onChangeText={formik.handleChange("email")}
-            value={formik.values.email}
-            onBlur={formik.handleBlur("email")}
-            autoCapitalize="none"
+      {!isLoading && (
+        <View style={styles.form}>
+          {/* Email */}
+          <View style={styles.inputContainer}>
+            <TextInput
+              style={styles.input}
+              placeholder="Email"
+              onChangeText={formik.handleChange("email")}
+              value={formik.values.email}
+              onBlur={formik.handleBlur("email")}
+              autoCapitalize="none"
+            />
+          </View>
+          <Text
+            style={
+              formik.errors.email && formik.touched.email
+                ? styles.errorVisible
+                : styles.errorInvisible
+            }
+          >
+            {formik.errors.email}
+          </Text>
+
+          {/* Password */}
+          <PasswordInput
+            passwordIsVisible={passwordIsVisible}
+            setPasswordIsVisible={setPasswordIsVisible}
+            placeholder="Password"
+            onChange={formik.handleChange("password")}
+            value={formik.values.password}
           />
+
+          <Text
+            style={
+              formik.errors.password && formik.touched.password
+                ? styles.errorVisible
+                : styles.errorInvisible
+            }
+          >
+            {formik.errors.password}
+          </Text>
+
+          <Pressable
+            style={({ pressed }) => [
+              styles.linkContainer,
+              pressed && styles.pressed,
+            ]}
+            onPress={() => navigation.navigate("Register")}
+          >
+            <Text style={styles.signUpLink}>
+              Don't have an account? Sign up!
+            </Text>
+          </Pressable>
+          <TouchableOpacity
+            onPress={formik.handleSubmit}
+            style={styles.signupButton}
+          >
+            <Text style={styles.signupButtonText}>Log in</Text>
+          </TouchableOpacity>
         </View>
-        <Text
-          style={
-            formik.errors.email && formik.touched.email
-              ? styles.errorVisible
-              : styles.errorInvisible
-          }
-        >
-          {formik.errors.email}
-        </Text>
-
-        {/* Password */}
-        <PasswordInput
-          passwordIsVisible={passwordIsVisible}
-          setPasswordIsVisible={setPasswordIsVisible}
-          placeholder="Password"
-          onChange={formik.handleChange("password")}
-          value={formik.values.password}
-        />
-
-        <Text
-          style={
-            formik.errors.password && formik.touched.password
-              ? styles.errorVisible
-              : styles.errorInvisible
-          }
-        >
-          {formik.errors.password}
-        </Text>
-
-        <Pressable
-          style={({ pressed }) => [
-            styles.linkContainer,
-            pressed && styles.pressed,
-          ]}
-          onPress={() => navigation.navigate("Register")}
-        >
-          <Text style={styles.signUpLink}>Don't have an account? Sign up!</Text>
-        </Pressable>
-        <TouchableOpacity
-          onPress={formik.handleSubmit}
-          style={styles.signupButton}
-        >
-          <Text style={styles.signupButtonText}>Log in</Text>
-        </TouchableOpacity>
-      </View>
+      )}
+      {isLoading && <ActivityIndicator size="large" />}
     </KeyboardAvoidingView>
   );
 };

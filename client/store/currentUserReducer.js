@@ -6,6 +6,7 @@ import { path } from "../utils/apiRoutes";
 export const fetchCurrentUser = createAsyncThunk(
   "currentUser/fetchCurrentUser",
   async () => {
+    console.log("FETCH CURRENT USER");
     const token = await AsyncStorage.getItem("token");
     const res = await fetch(`${path}users/me`, {
       headers: {

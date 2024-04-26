@@ -1,5 +1,5 @@
 import { fetchCurrentUser } from "../store/currentUserReducer";
-import { fetchUsers } from "../store/usersReducer";
+import { fetchFriends, fetchUsers } from "../store/usersReducer";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { path } from "./apiRoutes";
 
@@ -15,6 +15,7 @@ export const unfriend = async (user, setUserIsFriend, dispatch) => {
   if (data.status === "success") {
     dispatch(fetchCurrentUser());
     dispatch(fetchUsers());
+    dispatch(fetchFriends());
     setUserIsFriend(false);
   }
 };

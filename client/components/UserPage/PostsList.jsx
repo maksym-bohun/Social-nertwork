@@ -8,9 +8,9 @@ const PostsList = ({ posts }) => {
     <View style={styles.listContainer}>
       {[...posts]
         .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
-        .map((post) => (
-          <Post postId={post._id} key={post._id} />
-        ))}
+        .map((post) => {
+          return <Post postId={post._id} key={post._id} />;
+        })}
       {posts.length === 0 && (
         <View style={styles.emptyContainer}>
           <Feather name="camera" size={50} color="#ccc" />

@@ -10,7 +10,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { formatDate } from "../../../utils/formatDate";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchUsers } from "../../../store/usersReducer";
+import { fetchFriends, fetchUsers } from "../../../store/usersReducer";
 // import { dislikePost, likePost } from "../../../store/currentUserReducer";
 import { path } from "../../../utils/apiRoutes";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -54,7 +54,6 @@ const Post = ({ postId, post = null }) => {
 
     const token = await AsyncStorage.getItem("token");
     if (postIsLiked) {
-      console.log("Start dislike");
       await fetch(`${path}posts/dislike/${postId}`, {
         method: "POST",
         headers: {
@@ -63,8 +62,6 @@ const Post = ({ postId, post = null }) => {
         },
       });
     } else {
-      console.log("START LIKE");
-
       await fetch(`${path}posts/like/${postId}`, {
         method: "POST",
         headers: {
@@ -76,6 +73,7 @@ const Post = ({ postId, post = null }) => {
     setPostIsLiked(!postIsLiked);
     setLikes(currentPost.likes.length);
     dispatch(fetchUsers());
+    dispatch(fetchFriends());
     dispatch(fetchPosts());
     if (currentPost.author._id === currentUser._id)
       dispatch(fetchCurrentUser());
@@ -100,8 +98,6 @@ const Post = ({ postId, post = null }) => {
   const sendPostHandler = () => {
     push("Friends List to Share", { postId });
   };
-
-  console.log("CURRENT POST ", currentPost);
 
   return (
     <View style={styles.post} key={postId}>

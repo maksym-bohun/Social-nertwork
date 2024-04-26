@@ -18,8 +18,8 @@ import postImage from "../../utils/postImage";
 import * as Location from "expo-location";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useDispatch } from "react-redux";
-import { fetchUsers } from "../../store/usersReducer";
 import { fetchCurrentUser } from "../../store/currentUserReducer";
+import { fetchPosts } from "../../store/postsReducer";
 import { path } from "../../utils/apiRoutes";
 
 const NewPost = ({ navigation }) => {
@@ -86,8 +86,8 @@ const NewPost = ({ navigation }) => {
           );
           setText("");
           setImage(null);
-          dispatch(fetchUsers());
           dispatch(fetchCurrentUser());
+          dispatch(fetchPosts());
         }
       } catch (err) {
         console.log("Error: ", err);

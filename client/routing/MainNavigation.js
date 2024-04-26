@@ -27,6 +27,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import Notifications from "../components/Notifications/Notifications";
 import PostScreen from "../components/Post/PostScreen";
 import FriendsListToShare from "../components/SendPost/FriendsList";
+import { setFriends } from "../store/usersReducer";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -163,6 +164,7 @@ function EditAccountScreen() {
               onPress={async () => {
                 await AsyncStorage.setItem("token", "");
                 dispatch(logout());
+                dispatch(setFriends([]));
               }}
             >
               <MaterialIcons name="logout" size={20} color="black" />

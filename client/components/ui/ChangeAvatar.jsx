@@ -19,8 +19,8 @@ const ChangeAvatar = ({ setImage, source, imageStyle, handleUploadAvatar }) => {
         const uri = data.assets[0].uri;
         let newfile = {
           uri,
-          type: `test/${uri.split(".")[1]}`,
-          name: `test.${uri.split(".")[1]}`,
+          type: `test/${uri?.split(".")[1]}`,
+          name: `test.${uri?.split(".")[1]}`,
         };
         handleUploadAvatar(newfile);
       }

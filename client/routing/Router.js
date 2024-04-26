@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import MainNavigation from "./MainNavigation";
 import AuthStack from "./AuthStack";
 import { fetchCurrentUser, setUser } from "../store/currentUserReducer";
-import { fetchUsers, setUsers } from "../store/usersReducer";
+import { fetchFriends, fetchUsers, setUsers } from "../store/usersReducer";
 import { navigationRef } from "./rootNavigation";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { fetchPosts } from "../store/postsReducer";
@@ -17,10 +17,13 @@ export const Router = () => {
   );
 
   useEffect(() => {
+    console.log("I am fetching in router");
     dispatch(fetchUsers());
     dispatch(fetchPosts());
     if (AsyncStorage.getItem("token") && AsyncStorage.getItem("token") !== "") {
       dispatch(fetchCurrentUser());
+      dispatch(fetchFriends());
+      console.log("dispatch(fetchFriends());");
     }
   }, []);
 
