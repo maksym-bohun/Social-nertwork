@@ -25,11 +25,18 @@ import { logout, setUser } from "../store/currentUserReducer";
 import { MaterialIcons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 import Notifications from "../components/Notifications/Notifications";
 import PostScreen from "../components/Post/PostScreen";
 import FriendsListToShare from "../components/SendPost/FriendsList";
 >>>>>>> 4da8f45b (implemented sending posts)
+=======
+import Notifications from "../components/Notifications/Notifications";
+import PostScreen from "../components/Post/PostScreen";
+import FriendsListToShare from "../components/SendPost/FriendsList";
+import { setFriends } from "../store/usersReducer";
+>>>>>>> notifications
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -108,6 +115,19 @@ function DrawerPage() {
           ),
         }}
       />
+      <Drawer.Screen
+        name="Notifications"
+        component={Notifications}
+        options={{
+          title: "Notifications",
+          drawerIcon: () => (
+            <Image
+              style={{ height: 22, width: 22 }}
+              source={require("../assets/bell.png")}
+            />
+          ),
+        }}
+      />
     </Drawer.Navigator>
   );
 }
@@ -118,7 +138,7 @@ function EditAccountScreen() {
   return (
     <Drawer.Navigator initialRouteName="Account">
       <Drawer.Screen
-        name="Oleksandr Usyk"
+        name="User"
         component={Login}
         options={{
           drawerLabel: () => (
@@ -153,6 +173,7 @@ function EditAccountScreen() {
               onPress={async () => {
                 await AsyncStorage.setItem("token", "");
                 dispatch(logout());
+                dispatch(setFriends([]));
               }}
             >
               <MaterialIcons name="logout" size={20} color="black" />
@@ -163,6 +184,19 @@ function EditAccountScreen() {
             <Image
               style={{ height: 22, width: 22 }}
               source={require("../assets/user.png")}
+            />
+          ),
+        }}
+      />
+      <Drawer.Screen
+        name="Notifications"
+        component={Notifications}
+        options={{
+          title: "Notifications",
+          drawerIcon: () => (
+            <Image
+              style={{ height: 22, width: 22 }}
+              source={require("../assets/bell.png")}
             />
           ),
         }}
@@ -206,11 +240,7 @@ function createStackNavigator(aditionalRoutes = [], route) {
           key: route.params.key,
         })}
       />
-      <Stack.Screen
-        name="Add comment"
-        component={Comment}
-        options={{ headerBackTitle: "Back" }}
-      />
+      <Stack.Screen name="Add comment" component={Comment} />
       <Stack.Screen
         name="Friends List"
         component={FriendsList}

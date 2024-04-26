@@ -9,6 +9,7 @@ import {
 import React, { useEffect, useState } from "react";
 import { push } from "../../routing/rootNavigation";
 import { fetchPost } from "../../utils/fetchPost";
+<<<<<<< HEAD
 
 const PostMessage = ({ postId }) => {
   const [post, setPost] = useState(null);
@@ -16,6 +17,17 @@ const PostMessage = ({ postId }) => {
   useEffect(() => {
     fetchPost(setPost, postId);
     console.log("fetch");
+=======
+import { useRoute } from "@react-navigation/native";
+
+const PostMessage = ({ postId, fetchChat }) => {
+  const [post, setPost] = useState(null);
+  const route = useRoute();
+  console.log("post message route ", route.params);
+
+  useEffect(() => {
+    fetchPost(setPost, postId);
+>>>>>>> notifications
   }, []);
 
   return (

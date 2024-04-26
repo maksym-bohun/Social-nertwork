@@ -21,7 +21,9 @@ const Chats = () => {
   return (
     <View style={styles.chatsContainer}>
       <FlatList
-        data={chats.filter((chat) => chat.messages.length !== 0)}
+        data={chats
+          .filter((chat) => chat.messages.length !== 0)
+          .sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt))}
         renderItem={(itemData) => {
           return <ChatPreview item={itemData.item} />;
         }}

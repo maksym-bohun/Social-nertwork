@@ -145,12 +145,12 @@ const Register = ({ navigation }) => {
         </View>
         <Text
           style={
-            formik.errors.email && formik.touched.email
+            formik.errors.shortInfo && formik.touched.shortInfo
               ? styles.errorVisible
               : styles.errorInvisible
           }
         >
-          {formik.errors.email}
+          {formik.errors.shortInfo}
         </Text>
 
         {/* Password */}

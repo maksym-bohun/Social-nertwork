@@ -1,5 +1,5 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { fetchUsers } from "../store/usersReducer";
+import { fetchFriends, fetchUsers } from "../store/usersReducer";
 import { fetchCurrentUser } from "../store/currentUserReducer";
 import { path } from "./apiRoutes";
 
@@ -15,6 +15,7 @@ export const makeFriendsHandler = async (user, setUserIsFriend, dispatch) => {
   if (data.status === "success") {
     dispatch(fetchCurrentUser());
     dispatch(fetchUsers());
+    dispatch(fetchFriends());
     setUserIsFriend(true);
   }
 };

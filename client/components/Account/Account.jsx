@@ -1,14 +1,36 @@
 import { ScrollView, StyleSheet, Text, View } from "react-native";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import UserHeader from "../UserPage/UserHeader";
 import PostsList from "../UserPage/PostsList";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { fetchCurrentUser } from "../../store/currentUserReducer";
+import { RefreshControl } from "react-native-gesture-handler";
 
 const Account = ({ navigation }) => {
   const currentUser = useSelector((state) => state.currentUserReducer.user);
+  const [posts, setPosts] = useState(currentUser.posts);
+  const [refreshing, setRefreshing] = useState(false);
+  const dispatch = useDispatch();
+
+  const onRefresh = React.useCallback(() => {
+    setRefreshing(true);
+    dispatch(fetchCurrentUser());
+    setTimeout(() => {
+      setRefreshing(false);
+    }, 2000);
+  }, []);
+
+  useEffect(() => {
+    setPosts(currentUser.posts);
+  }, [currentUser]);
+
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView
+      style={styles.container}
+      refreshControl={
+        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+      }
+    >
       <UserHeader
         mode="account"
         user={currentUser}
@@ -16,7 +38,7 @@ const Account = ({ navigation }) => {
           navigation.navigate("Edit account", { user: currentUser });
         }}
       />
-      <PostsList posts={currentUser.posts} />
+      <PostsList posts={posts} />
     </ScrollView>
   );
 };

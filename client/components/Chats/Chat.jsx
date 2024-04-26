@@ -11,13 +11,19 @@ import { checkChat } from "./../../utils/checkChat";
 import { createChat } from "../../utils/createChat";
 import PostMessage from "./PostMessage";
 
-const renderChatItem = (userId, itemData) => {
+const renderChatItem = (
+  currentUserId,
+  friendId,
+  itemData,
+  setChatId,
+  setMessages
+) => {
   return (
     <View
       key={itemData.item._id}
       style={[
         styles.messageContainer,
-        itemData.item.sender == userId
+        itemData.item.sender == friendId
           ? styles.messageFromCurrentUser
           : styles.messageToCurrentUser,
       ]}
@@ -26,7 +32,16 @@ const renderChatItem = (userId, itemData) => {
         <Text style={styles.messageText}>{itemData.item.message}</Text>
       )}
       {itemData.item.messageType === "post" && (
+<<<<<<< HEAD
         <PostMessage postId={itemData.item.message} />
+=======
+        <PostMessage
+          postId={itemData.item.message}
+          fetchChat={() =>
+            fetchChat(currentUserId, friendId, setChatId, setMessages)
+          }
+        />
+>>>>>>> notifications
       )}
       {/* <Text style={styles.time}></Text> */}
     </View>
@@ -47,6 +62,17 @@ async function createMessage(sender, receiver, message, chatId, socket) {
     msg: message,
   });
 }
+
+const fetchChat = async (currentUserId, friendId, setChatId, setMessages) => {
+  const res = await checkChat(currentUserId, friendId);
+  if (res && res.status === "success") {
+    setChatId(res.chat._id);
+    setMessages(res.chat.messages);
+  } else {
+    const newChatId = await createChat(currentUserId, friendId);
+    setChatId(newChatId);
+  }
+};
 
 const Chat = ({ route, navigation }) => {
   const [messages, setMessages] = useState([]);
@@ -97,17 +123,7 @@ const Chat = ({ route, navigation }) => {
   }, [socket]);
 
   useEffect(() => {
-    const fetchChat = async () => {
-      const res = await checkChat(currentUser._id, friendId);
-      if (res && res.status === "success") {
-        setChatId(res.chat._id);
-        setMessages(res.chat.messages);
-      } else {
-        const newChatId = await createChat(currentUser._id, friendId);
-        setChatId(newChatId);
-      }
-    };
-    fetchChat();
+    fetchChat(currentUser._id, friendId, setChatId, setMessages);
   }, []);
 
   const sendMessageHandler = async () => {
@@ -137,7 +153,19 @@ const Chat = ({ route, navigation }) => {
       <View style={styles.messagesContainer}>
         <View>
           <FlatList
+<<<<<<< HEAD
             renderItem={(itemData) => renderChatItem(friendId, itemData)}
+=======
+            renderItem={(itemData) =>
+              renderChatItem(
+                currentUser._id,
+                friendId,
+                itemData,
+                setChatId,
+                setMessages
+              )
+            }
+>>>>>>> notifications
             style={styles.list}
             keyExtractor={(item) => item._id}
             inverted
